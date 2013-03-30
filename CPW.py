@@ -55,16 +55,6 @@ class CPW():
 		
 #		self.lambda_0 = 40e-9
 	
-	def _variable_check(self, f):
-		'''Test of which type is the varible send and return numpy.ndarray of the variable'''
-		
-		if isinstance(f, np.ndarray) :
-			return f
-		elif isinstance(f, list):
-			return np.array(f)
-		else:
-			return np.array([f])
-	
 	#################################################################################
 	#
 	#
@@ -531,10 +521,9 @@ class CPW():
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- Length inductance (numpy.ndarray) in Henrys per meter
+					- Length inductance in Henrys per meter
 		'''
 		
-		f = self._variable_check(f)
 		first_condition = np.ma.masked_less_equal(f, self._omega_L0()).mask
 		second_condition = np.ma.masked_less_equal(f, self._omega_L1()).mask
 		third_condition = np.ma.masked_less_equal(f, self._omega_L2()).mask
@@ -555,10 +544,9 @@ class CPW():
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- Length resistance (numpy.ndarray) in Ohms per meter
+					- Length resistance in Ohms per meter
 		'''
 		
-		f = self._variable_check(f)
 		return self._Rc(f) + self._Rg(f)
 	
 	def get_capacitance_per_unit_length(self, f):
@@ -567,11 +555,14 @@ class CPW():
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- Length capacitance (numpy.ndarray) in Farrad per meter
+					- Length capacitance in Farrad per meter
 		'''
 		
-		f = self._variable_check(f)
-		return np.array([2.*cst.epsilon_0*(self._F_up(self._t) + self._epsilon_r*self._F_low())]*len(f))
+		if isinstance(f, np.ndarray) :
+			
+			return np.array([2.*cst.epsilon_0*(self._F_up(self._t) + self._epsilon_r*self._F_low())]*len(f))
+		else:
+			return 2.*cst.epsilon_0*(self._F_up(self._t) + self._epsilon_r*self._F_low())
 	
 	def get_conductance_per_unit_length(self, f):
 		'''Return the length conductance of the transmision line
@@ -579,10 +570,9 @@ class CPW():
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- Length conductance (numpy.ndarray) in Siemens per meter
+					- Length conductance in Siemens per meter
 		'''
 		
-		f = self._variable_check(f)
 		return 2.*self._omega(f)*cst.epsilon_0*self._epsilon_r*self._tan_delta*self._F_low()
 	
 	def get_characteristic_impedance(self, f):
@@ -591,10 +581,9 @@ class CPW():
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- Characteristic impedance (numpy.ndarray) in Ohms
+					- Characteristic impedance in Ohms
 		'''
 		
-		f = self._variable_check(f)
 		temp = np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))/(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)))
 		return np.sqrt(temp.real**2 + temp.imag**2)
 	
@@ -604,10 +593,9 @@ class CPW():
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- Gamma coefficient (numpy.ndarray)
+					- Gamma coefficient
 		'''
 		
-		f = self._variable_check(f)
 		return np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))*(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)))
 	
 	def get_alpha_per_unit_length(self, f):
@@ -616,7 +604,7 @@ class CPW():
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- alpha coefficient (numpy.ndarray)
+					- alpha coefficient
 		'''
 		return self.gamma(f).real
 	
@@ -626,7 +614,7 @@ class CPW():
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- Beta coefficient (numpy.ndarray)
+					- Beta coefficient
 		'''
 		return self.gamma(f).imag
 	
@@ -636,10 +624,8 @@ class CPW():
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- Velocity (numpy.ndarray) in unit of c (speed of light)
+					- Velocity in unit of c (speed of light)
 		'''
-		
-		f = self._variable_check(f)
 		
 		return 1./np.sqrt(self.get_capacitance_per_unit_length(f) * self.get_inductance_per_unit_length(f))/cst.c
 	

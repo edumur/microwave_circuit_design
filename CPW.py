@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+#Based on an article of Wolfgang Hainrich
+#"Quasi-TEM Description of MMIC coplanar Lines Including onductor-Loss Effects"
+# IEEE Transactions on Microwave Theory And Techniques, vol 41, n° 1, January 1993
+
 #Copyright (C) 2013 Dumur Étienne
 
 #This program is free software; you can redistribute it and/or modify
@@ -19,7 +24,7 @@ import scipy.constants as cst
 from scipy.special import ellipk, ellipe
 import numpy as np
 
-class TL:
+class CPW():
 	
 	def __init__(self, epsilon_r = 11.68, tan_delta = 7e-4, kappa = 3.53e50, w = 19e-6, s = 11.5e-6, t = 100e-9, w_g = 200e-6):
 		'''Class allowing the calculation of the parameters of a coplanar waveguide
@@ -59,6 +64,59 @@ class TL:
 			return np.array(f)
 		else:
 			return np.array([f])
+	
+	#################################################################################
+	#
+	#
+	#									Set geometric parameters
+	#
+	#
+	#################################################################################
+	
+	def set_width_ground_plane(self, w_g):
+		'''
+			Set the thickness of the metal layer.
+			
+			Input:
+				- w (float): Thickness of the metal layer.
+		'''
+		
+		self.w_g = float(w_g)
+	
+	def set_thickness(self, t):
+		'''
+			Set the thickness of the metal layer.
+			
+			Input:
+				- w (float): Thickness of the metal layer.
+		'''
+		
+		self.t = float(t)
+		self._t_H = self.t/2.
+	
+	def set_width_gap_separation(self, s):
+		'''
+			Set the width of the gap separation.
+			
+			Input:
+				- s (float): Width of the gap separation.
+		'''
+		
+		self.s = float(s)
+		self._b   = self.w/2. + self.s
+	
+	def set_width_central_line(self, w):
+		'''
+			Set the width of the central line.
+			
+			Input:
+				- w (float): Width of the central line in meter
+		'''
+		
+		self.w = float(w)
+		self._a   = self.w/2.
+		self._b   = self.w/2. + self.s
+	
 	
 	#################################################################################
 	#

@@ -39,18 +39,18 @@ class CPW():
 				- w_g       (float) : Width of the ground plane in meter
 		'''
 		
-		self.epsilon_r = epsilon_r
-		self.tan_delta = tan_delta
-		self.kappa     = kappa
+		self._epsilon_r = epsilon_r
+		self._tan_delta = tan_delta
+		self._kappa     = kappa
 		
-		self.w   = w
-		self.s   = s
-		self.t   = t
-		self.w_g = w_g
+		self._w   = w
+		self._s   = s
+		self._t   = t
+		self._w_g = w_g
 		
-		self._a   = self.w/2.
-		self._b   = self.w/2. + self.s
-		self._t_H = self.t/2.
+		self._a   = self._w/2.
+		self._b   = self._w/2. + self._s
+		self._t_H = self._t/2.
 		
 		
 		self.lambda_0 = 40e-9
@@ -81,7 +81,7 @@ class CPW():
 				- w (float): Thickness of the metal layer.
 		'''
 		
-		self.w_g = float(w_g)
+		self._w_g = float(w_g)
 	
 	def set_thickness(self, t):
 		'''
@@ -91,8 +91,8 @@ class CPW():
 				- w (float): Thickness of the metal layer.
 		'''
 		
-		self.t = float(t)
-		self._t_H = self.t/2.
+		self._t = float(t)
+		self._t_H = self._t/2.
 	
 	def set_width_gap_separation(self, s):
 		'''
@@ -102,8 +102,8 @@ class CPW():
 				- s (float): Width of the gap separation.
 		'''
 		
-		self.s = float(s)
-		self._b   = self.w/2. + self.s
+		self._s = float(s)
+		self._b   = self._w/2. + self._s
 	
 	def set_width_central_line(self, w):
 		'''
@@ -113,9 +113,9 @@ class CPW():
 				- w (float): Width of the central line in meter
 		'''
 		
-		self.w = float(w)
-		self._a   = self.w/2.
-		self._b   = self.w/2. + self.s
+		self._w = float(w)
+		self._a   = self._w/2.
+		self._b   = self._w/2. + self._s
 	
 	
 	#################################################################################
@@ -127,9 +127,9 @@ class CPW():
 	#################################################################################
 	
 	def _defined_short_parameter(self):
-		self._a   = self.w/2.
-		self._b   = self.w/2. + self.s
-		self._t_H = self.t/2.
+		self._a   = self._w/2.
+		self._b   = self._w/2. + self._s
+		self._t_H = self._t/2.
 	
 	#################################################################################
 	#
@@ -152,10 +152,10 @@ class CPW():
 	#
 	#################################################################################
 	def _g(self):
-		return (1./( 2*self._k0()**2*ellipk(self._k0())**2 ))*( -np.log(self.t/(4.*self.w)) - (self.w/(self.w + 2.*self.s)) * np.log(self.t/(4.*(self.w + 2.*self.s))) + ((2.*(self.w+self.s))/(self.w + 2.*self.s))*np.log(self.s/(self.w+self.s)) )
+		return (1./( 2*self._k0()**2*ellipk(self._k0())**2 ))*( -np.log(self._t/(4.*self._w)) - (self._w/(self._w + 2.*self._s)) * np.log(self._t/(4.*(self._w + 2.*self._s))) + ((2.*(self._w+self._s))/(self._w + 2.*self._s))*np.log(self._s/(self._w+self._s)) )
 	
 	def L_k(self):
-		return cst.mu_0*self.lambda_0**2*self._g()/(self.t*self.w)
+		return cst.mu_0*self.lambda_0**2*self._g()/(self._t*self._w)
 	
 	#################################################################################
 	#
@@ -166,13 +166,13 @@ class CPW():
 	#################################################################################
 	
 	def _k0(self):
-		return self.w / (self.w + 2.*self.s)
+		return self._w / (self._w + 2.*self._s)
 	
 	def _k1(self):
-		return self._k0()*np.sqrt((1. - ((self.w+2.*self.s)/(self.w+2.*self.s+2*self.w_g))**2)/(1-((self.w)/(self.w+2.*self.s+2*self.w_g))**2))
+		return self._k0()*np.sqrt((1. - ((self._w+2.*self._s)/(self._w+2.*self._s+2*self._w_g))**2)/(1-((self._w)/(self._w+2.*self._s+2*self._w_g))**2))
 	
 	def _k2(self):
-		return self._k0()*np.sqrt((1-((self.w + 2.*self.s)/(4.*self.w +2.*self.s))**2 )/( 1 - ((self.w)/(4.*self.w + 2*self.s))**2))
+		return self._k0()*np.sqrt((1-((self._w + 2.*self._s)/(4.*self._w +2.*self._s))**2 )/( 1 - ((self._w)/(4.*self._w + 2*self._s))**2))
 	
 	#################################################################################
 	#
@@ -212,19 +212,19 @@ class CPW():
 	#################################################################################
 	
 	def _L_DC(self, w_1, w_2):
-		return (cst.mu_0/(8.*np.pi))*((4.*self._g_L(w_1))/w_1**2 + (1./w_2**2)*(self._g_L(w_1 + 2.*self.s) + self._g_L(w_1 + 2*w_2 +2.*self.s) + 2.*self._g_L(w_2) - 2.*self._g_L(w_1 + w_2 + 2.*self.s)) - (4./(w_1*w_2))*(self._g_L(w_1+w_2+self.s) - self._g_L(w_1+self.s) +self._g_L(self.s) - self._g_L(w_2+self.s)))
+		return (cst.mu_0/(8.*np.pi))*((4.*self._g_L(w_1))/w_1**2 + (1./w_2**2)*(self._g_L(w_1 + 2.*self._s) + self._g_L(w_1 + 2*w_2 +2.*self._s) + 2.*self._g_L(w_2) - 2.*self._g_L(w_1 + w_2 + 2.*self._s)) - (4./(w_1*w_2))*(self._g_L(w_1+w_2+self._s) - self._g_L(w_1+self._s) +self._g_L(self._s) - self._g_L(w_2+self._s)))
 	
 	def _g_L(self, x):
-		return (self.t**2/12. - x**2/2.)*np.log(1 + (x/self.t)**2) + (x**4/(12*self.t**2))*np.log(1 + (self.t/x)**2) - ((2.*x*self.t)/3.)*(np.arctan(x/self.t) + (x/self.t)**2*np.arctan(self.t/x))
+		return (self._t**2/12. - x**2/2.)*np.log(1 + (x/self._t)**2) + (x**4/(12*self._t**2))*np.log(1 + (self._t/x)**2) - ((2.*x*self._t)/3.)*(np.arctan(x/self._t) + (x/self._t)**2*np.arctan(self._t/x))
 	
 	def _L_1(self):
-		return self._L_DC(self.w, (3.*self.w)/2.) - cst.mu_0/(4.*self._F1())
+		return self._L_DC(self._w, (3.*self._w)/2.) - cst.mu_0/(4.*self._F1())
 	
 	def _L_2(self):
-		return np.sqrt(cst.mu_0/(2*self._omega_L2()*self.kappa))*((self._F_lc() + self._F_lg())/(4.*self._F_up(self.t/2.)**2))
+		return np.sqrt(cst.mu_0/(2*self._omega_L2()*self._kappa))*((self._F_lc() + self._F_lg())/(4.*self._F_up(self._t/2.)**2))
 	
 	def _L_inf(self):
-		return cst.mu_0/(4.*self._F_up(self.t/2.))
+		return cst.mu_0/(4.*self._F_up(self._t/2.))
 	
 	#################################################################################
 	#
@@ -235,34 +235,34 @@ class CPW():
 	#################################################################################
 	
 	def _F_lc(self):
-		if self._t_H<= self.s/2.:
-			A = np.pi*self._b + self._b*np.log((8.*np.pi*self._a)/(self._a + self._b)) - (self._b - self._a)*np.log((self._b-self._a)/(self._b+self._a)) - self._b*np.log((2*self._t_H)/self.s)
-			B = self._pc1()*self._pc3() - self._pc2() - self._b*self._pc4()/self._a + self._pc5() + (self._pc2() -self._pc3() + self._b/self._a - 1. - self._pc5())*np.log((2.*self._t_H)/self.s)
-			C = self._pc3()*(1.-3.*self._pc1()/2.) + 3.*self._pc1()/2. -2.*self._pc2() + 1. +(3.*self._b*self._pc4())/(2.*self._a) - (self._b*(self._b-self._a))/(self._a*(self._b+self._a)) + (2.*self._pc2() + self._pc1()*(self._pc3() - 1.) - self._b*self._pc4()/self._a)*np.log((2.*self._t_H)/self.s)
+		if self._t_H<= self._s/2.:
+			A = np.pi*self._b + self._b*np.log((8.*np.pi*self._a)/(self._a + self._b)) - (self._b - self._a)*np.log((self._b-self._a)/(self._b+self._a)) - self._b*np.log((2*self._t_H)/self._s)
+			B = self._pc1()*self._pc3() - self._pc2() - self._b*self._pc4()/self._a + self._pc5() + (self._pc2() -self._pc3() + self._b/self._a - 1. - self._pc5())*np.log((2.*self._t_H)/self._s)
+			C = self._pc3()*(1.-3.*self._pc1()/2.) + 3.*self._pc1()/2. -2.*self._pc2() + 1. +(3.*self._b*self._pc4())/(2.*self._a) - (self._b*(self._b-self._a))/(self._a*(self._b+self._a)) + (2.*self._pc2() + self._pc1()*(self._pc3() - 1.) - self._b*self._pc4()/self._a)*np.log((2.*self._t_H)/self._s)
 			
-			return (self._pc0()/self.s)*(A/(self._a+self._b) + self._t_H*B/self.s + (self._t_H/self.s)**2*C)
+			return (self._pc0()/self._s)*(A/(self._a+self._b) + self._t_H*B/self._s + (self._t_H/self._s)**2*C)
 		else:
-			return 1./(2.*self.s) + self._t_H/self.s**2 + (self._pc0()/self.s)*((np.pi*self._b)/(self._a+self._b) +self._pc6()/2. +(1./8.)*(-self._pc1() +self._pc3()*(self._pc1()+2.) -self._b*self._pc4()/self._a -(2.*(self._a**2 + self._b**2))/(self._a*(self._a+self._b))))
+			return 1./(2.*self._s) + self._t_H/self._s**2 + (self._pc0()/self._s)*((np.pi*self._b)/(self._a+self._b) +self._pc6()/2. +(1./8.)*(-self._pc1() +self._pc3()*(self._pc1()+2.) -self._b*self._pc4()/self._a -(2.*(self._a**2 + self._b**2))/(self._a*(self._a+self._b))))
 	
 	def _F_lg(self):
-		if self._t_H<= self.s/2.:
-			A = np.pi*self._a + self._a*np.log((8.*np.pi*self._b)/(self._b-self._a)) - self._b *np.log((self._b-self._a)/(self._b+self._a)) - self._a*np.log((2*self._t_H)/self.s)
-			B = (self._a*self._pc1()*self._pc3())/self._b +(1.-self._a/self._b)*self._pc1() - self._pc2() - self._pc4() - self._pc5() + (self._pc2() - self._a*self._pc3()/self._b +self._a/self._b - 1. +self._pc5())*np.log((2.*self._t_H)/self.s)
-			C = ((self._a*self._pc3())/self._b)*(1.-3.*self._pc1()/2.) + (3.*self._a*self._pc1())/(2.*self._b) -2.*self._pc2() +2. - self._a/self._b +3.*self._pc4()/2. - (self._b-self._a)/(self._b+self._a) + (2.*self._pc2() + ((self._a*self._pc1())/self._b)*(self._pc3() - 1.) - self._pc4())*np.log((2.*self._t_H)/self.s)
+		if self._t_H<= self._s/2.:
+			A = np.pi*self._a + self._a*np.log((8.*np.pi*self._b)/(self._b-self._a)) - self._b *np.log((self._b-self._a)/(self._b+self._a)) - self._a*np.log((2*self._t_H)/self._s)
+			B = (self._a*self._pc1()*self._pc3())/self._b +(1.-self._a/self._b)*self._pc1() - self._pc2() - self._pc4() - self._pc5() + (self._pc2() - self._a*self._pc3()/self._b +self._a/self._b - 1. +self._pc5())*np.log((2.*self._t_H)/self._s)
+			C = ((self._a*self._pc3())/self._b)*(1.-3.*self._pc1()/2.) + (3.*self._a*self._pc1())/(2.*self._b) -2.*self._pc2() +2. - self._a/self._b +3.*self._pc4()/2. - (self._b-self._a)/(self._b+self._a) + (2.*self._pc2() + ((self._a*self._pc1())/self._b)*(self._pc3() - 1.) - self._pc4())*np.log((2.*self._t_H)/self._s)
 		
-			return (self._pc0()/self.s)*(A/(self._a+self._b) + self._t_H*B/self.s + (self._t_H/self.s)**2*C)
+			return (self._pc0()/self._s)*(A/(self._a+self._b) + self._t_H*B/self._s + (self._t_H/self._s)**2*C)
 		else:
-			return 1./(2.*self.s) + self._t_H/self.s**2 + (self._pc0()/self.s)*((np.pi*self._a)/(self._a+self._b) +self._pc6()/2. +(1./8.)*(-(self._a*self._pc1())/self._b +((self._a*self._pc3())/self._b)*(self._pc1()+2.) - self._pc4() -(2.*(self._a**2 + self._b**2))/(self._b*(self._a+self._b))))
+			return 1./(2.*self._s) + self._t_H/self._s**2 + (self._pc0()/self._s)*((np.pi*self._a)/(self._a+self._b) +self._pc6()/2. +(1./8.)*(-(self._a*self._pc1())/self._b +((self._a*self._pc3())/self._b)*(self._pc1()+2.) - self._pc4() -(2.*(self._a**2 + self._b**2))/(self._b*(self._a+self._b))))
 	
 	def _F1(self):
-		return self._F_up(self.t/2.) + ellipk(self._k2())/ellipk(np.sqrt(1-self._k2()**2)) - ellipk(self._k1())/ellipk(np.sqrt(1-self._k1()**2))
+		return self._F_up(self._t/2.) + ellipk(self._k2())/ellipk(np.sqrt(1-self._k2()**2)) - ellipk(self._k1())/ellipk(np.sqrt(1-self._k1()**2))
 	
 	def _F_up(self, t):
 		
-		if t<= self.s/2. :
-			return ellipk(self._k1())/ellipk(np.sqrt(1-self._k1()**2)) + self._pc0()*( (t/self.s)*(self._pc1() - np.log((2.*t)/self.s)) +(t/self.s)*(t/self.s)*(1. - (3.*self._pc2())/2. + self._pc2()*np.log((2.*t)/self.s)))
+		if t<= self._s/2. :
+			return ellipk(self._k1())/ellipk(np.sqrt(1-self._k1()**2)) + self._pc0()*( (t/self._s)*(self._pc1() - np.log((2.*t)/self._s)) +(t/self._s)*(t/self._s)*(1. - (3.*self._pc2())/2. + self._pc2()*np.log((2.*t)/self._s)))
 		else :
-			return ellipk(self._k1())/ellipk(np.sqrt(1-self._k1()**2)) + (self._pc0()*(self._pc2() + 2.))/8. + t/self.s
+			return ellipk(self._k1())/ellipk(np.sqrt(1-self._k1()**2)) + (self._pc0()*(self._pc2() + 2.))/8. + t/self._s
 	
 	def _F_low(self):
 		return ellipk(self._k1())/ellipk(np.sqrt(1 - self._k1()**2))
@@ -276,13 +276,13 @@ class CPW():
 	#################################################################################
 	
 	def _omega_L0(self):
-		return 4./(cst.mu_0*self.kappa*self.t*self.w_g)
+		return 4./(cst.mu_0*self._kappa*self._t*self._w_g)
 	
 	def _omega_L1(self):
-		return 4./(cst.mu_0*self.kappa*self.t*self.w)
+		return 4./(cst.mu_0*self._kappa*self._t*self._w)
 	
 	def _omega_L2(self):
-		return 18./(cst.mu_0*self.kappa*self.t**2)
+		return 18./(cst.mu_0*self._kappa*self._t**2)
 	
 	#################################################################################
 	#
@@ -293,7 +293,7 @@ class CPW():
 	#################################################################################
 	
 	def _nu_1(self):
-		return np.log((self._L_DC(self.w, self.w_g) - self._L_inf())/self._L_1())/np.log(self._omega_L0()/self._omega_L1())
+		return np.log((self._L_DC(self._w, self._w_g) - self._L_inf())/self._L_1())/np.log(self._omega_L0()/self._omega_L1())
 	
 	def _nu_2(self):
 		return np.log(self._L_1()/self._L_2())/np.log(self._omega_L1()/self._omega_L2())
@@ -307,16 +307,16 @@ class CPW():
 	#################################################################################
 	
 	def _eta_1(self):
-		return (self.w/self.w_g)**4*(self._nu_1()/(4.- self._nu_1()))
+		return (self._w/self._w_g)**4*(self._nu_1()/(4.- self._nu_1()))
 	
 	def _eta_2(self):
-		return (self.w/self.w_g)**2*(self._nu_1()/(4.- self._nu_1()))
+		return (self._w/self._w_g)**2*(self._nu_1()/(4.- self._nu_1()))
 	
 	def _eta_3(self):
-		return (((2.*self.t)/(9*self.w))**3)*((self._nu_2() - 1./2.)/(self._nu_2() + 5./2.))
+		return (((2.*self._t)/(9*self._w))**3)*((self._nu_2() - 1./2.)/(self._nu_2() + 5./2.))
 	
 	def _eta_4(self):
-		return ((2.*self.t)/(9*self.w))*((self._nu_2() + 1./2.)/(self._nu_2() + 5./2.))
+		return ((2.*self._t)/(9*self._w))*((self._nu_2() + 1./2.)/(self._nu_2() + 5./2.))
 	
 	#################################################################################
 	#
@@ -333,16 +333,16 @@ class CPW():
 		return (1./(1. + self._eta_1()))*( self._a_3L() * (1. - self._eta_3()) - self._eta_2() - self._eta_4() )
 	
 	def _a_4L(self):
-		return -(9./2.)*(self.w/self.t)*(self._eta_4() + self._a_3L()*self._eta_3())
+		return -(9./2.)*(self._w/self._t)*(self._eta_4() + self._a_3L()*self._eta_3())
 	
 	def _a_5L(self):
-		return (((2.*self.t)/(9.*self.w))**2)*self._a_3L() + self._a_4L()
+		return (((2.*self._t)/(9.*self._w))**2)*self._a_3L() + self._a_4L()
 	
 	def _a_1L(self):
 		return self._nu_1()/(4. - self._nu_1()) + self._eta_2()*self._a_2L()
 	
 	def _a_0L(self):
-		return (1. - self._L_inf()/self._L_DC(self.w, self.w_g))*(self._a_1L() + (self.w/self.w_g)**2*self._a_2L())
+		return (1. - self._L_inf()/self._L_DC(self._w, self._w_g))*(self._a_1L() + (self._w/self._w_g)**2*self._a_2L())
 	
 	#################################################################################
 	#
@@ -353,11 +353,11 @@ class CPW():
 	#################################################################################
 	
 	def _omega_c1(self):
-#		print self.kappa, self.epsilon_r
-		return np.sqrt(2.)*(4./(cst.mu_0*self.kappa*self.t*self.w))
+		
+		return np.sqrt(2.)*(4./(cst.mu_0*self._kappa*self._t*self._w))
 	
 	def _omega_c2(self):
-		return (8./(cst.mu_0*self.kappa))*((self.w + self.t)/(self.w*self.t))**2.
+		return (8./(cst.mu_0*self._kappa))*((self._w + self._t)/(self._w*self._t))**2.
 	
 	#################################################################################
 	#
@@ -368,10 +368,10 @@ class CPW():
 	#################################################################################
 	
 	def _omega_g1(self):
-		return 2./(cst.mu_0*self.kappa*self.t*self.w_g)
+		return 2./(cst.mu_0*self._kappa*self._t*self._w_g)
 	
 	def _omega_g2(self):
-		return (2./(cst.mu_0*self.kappa))*((2*self.w_g + self.t)/(self.w_g*self.t))**2.
+		return (2./(cst.mu_0*self._kappa))*((2*self._w_g + self._t)/(self._w_g*self._t))**2.
 	
 	#################################################################################
 	#
@@ -396,10 +396,10 @@ class CPW():
 	#################################################################################
 	
 	def _R_c0(self):
-		return 1./(self.kappa*self.w*self.t)
+		return 1./(self._kappa*self._w*self._t)
 	
 	def _R_c1(self):
-		return np.sqrt((self._omega_c2() * cst.mu_0)/(2.*self.kappa))*(self._F_lc()/(4.*self._F_up(self.t/2.)**2.))
+		return np.sqrt((self._omega_c2() * cst.mu_0)/(2.*self._kappa))*(self._F_lc()/(4.*self._F_up(self._t/2.)**2.))
 	
 	#################################################################################
 	#
@@ -410,10 +410,10 @@ class CPW():
 	#################################################################################
 	
 	def _R_g0(self):
-		return 1./(2.*self.kappa*self.w_g*self.t)
+		return 1./(2.*self._kappa*self._w_g*self._t)
 	
 	def _R_g1(self):
-		return np.sqrt((self._omega_g2() * cst.mu_0)/(2.*self.kappa))*(self._F_lg()/(4.*self._F_up(self.t/2.)**2.))
+		return np.sqrt((self._omega_g2() * cst.mu_0)/(2.*self._kappa))*(self._F_lg()/(4.*self._F_up(self._t/2.)**2.))
 	
 	#################################################################################
 	#
@@ -486,7 +486,7 @@ class CPW():
 		elif [~first_condition] and second_condition:
 			return self._R_c1()*(self._omega(f)/self._omega_c2())**self._nu_c()*(1. + self._a_2c()*(self._omega_c1()/self._omega(f))**2 + self._a_3c()*(self._omega(f)/self._omega_c2())**2)
 		elif [~second_condition]:
-			return np.sqrt((self._omega(f)*cst.mu_0)/(2.*self.kappa))*(self._F_lc()/(4.*self._F_up(self.t/2.)**2))*(1. + self._a_4c()*(self._omega_c2()/self._omega(f))**2)
+			return np.sqrt((self._omega(f)*cst.mu_0)/(2.*self._kappa))*(self._F_lc()/(4.*self._F_up(self._t/2.)**2))*(1. + self._a_4c()*(self._omega_c2()/self._omega(f))**2)
 		
 	
 	def _Rg(self, f):
@@ -498,7 +498,7 @@ class CPW():
 		elif [~first_condition] and second_condition:
 			return self._R_g1()*(self._omega(f)/self._omega_g2())**self._nu_g()*(1. + self._a_2g()*(self._omega_g1()/self._omega(f))**2 + self._a_3g()*(self._omega(f)/self._omega_g2())**2)
 		elif  [~second_condition]:
-			return np.sqrt((self._omega(f)*cst.mu_0)/(2.*self.kappa))*(self._F_lg()/(4.*self._F_up(self.t/2.)**2))*(1. + self._a_4g()*(self._omega_g2()/self._omega(f))**2)
+			return np.sqrt((self._omega(f)*cst.mu_0)/(2.*self._kappa))*(self._F_lg()/(4.*self._F_up(self._t/2.)**2))*(1. + self._a_4g()*(self._omega_g2()/self._omega(f))**2)
 		
 	#################################################################################
 	#
@@ -524,13 +524,13 @@ class CPW():
 		third_condition = np.ma.masked_less_equal(f, self._omega_L2()).mask
 		
 		if first_condition:
-			return self._L_DC(self.w, self.w_g)*(1. + self._a_0L()*(self._omega(f)/self._omega_L0())**2.)
+			return self._L_DC(self._w, self._w_g)*(1. + self._a_0L()*(self._omega(f)/self._omega_L0())**2.)
 		elif [~first_condition] and second_condition :
 			return self._L_inf() + self._L_1()*(self._omega(f)/self._omega_L1())**self._nu_1()*(1. + self._a_1L()*(self._omega_L0()/self._omega(f))**2. + self._a_2L()*(self._omega(f)/self._omega_L1())**2. )
 		elif [~second_condition] and third_condition :
 			return self._L_inf() +self._L_2()*(self._omega(f)/self._omega_L2())**self._nu_2()*(1. + self._a_3L()*(self._omega_L1()/self._omega(f))**2. + self._a_4L()*(self._omega(f)/self._omega_L2())**2. )
 		elif [~second_condition] :
-			return self._L_inf() + np.sqrt(cst.mu_0/(2.*self._omega(f)*self.kappa))*((self._F_lc() + self._F_lg())/(4.*self._F_up(self.t/2.)**2.))*(1. + self._a_5L()*(self._omega_L2()/self._omega(f)))
+			return self._L_inf() + np.sqrt(cst.mu_0/(2.*self._omega(f)*self._kappa))*((self._F_lc() + self._F_lg())/(4.*self._F_up(self._t/2.)**2.))*(1. + self._a_5L()*(self._omega_L2()/self._omega(f)))
 		
 	
 	def R_l(self, f):
@@ -557,7 +557,7 @@ class CPW():
 		
 		self._defined_short_parameter()
 		f = self._variable_check(f)
-		return np.array([2.*cst.epsilon_0*(self._F_up(self.t) + self.epsilon_r*self._F_low())]*len(f))
+		return np.array([2.*cst.epsilon_0*(self._F_up(self._t) + self._epsilon_r*self._F_low())]*len(f))
 	
 	def G_l(self, f):
 		'''Return the length conductance of the transmision line
@@ -570,7 +570,7 @@ class CPW():
 		
 		self._defined_short_parameter()
 		f = self._variable_check(f)
-		return 2.*self._omega(f)*cst.epsilon_0*self.epsilon_r*self.tan_delta*self._F_low()
+		return 2.*self._omega(f)*cst.epsilon_0*self._epsilon_r*self._tan_delta*self._F_low()
 	
 	def Z_0(self, f):
 		'''Return the norm of the characteristic impedance of the transmision line

@@ -27,16 +27,17 @@ import numpy as np
 class CPW():
 	
 	def __init__(self, epsilon_r = 11.68, tan_delta = 7e-4, kappa = 3.53e50, w = 19e-6, s = 11.5e-6, t = 100e-9, w_g = 200e-6):
-		'''Class allowing the calculation of the parameters of a coplanar waveguide
+		'''Class allowing the calculation of the parameters of a coplanar waveguide.
+			
 			Input:
-				- epsilon_r (float) : Relative permitivity of the substrat
-				- tan_delta (float) : Loss tangent
-				- kappa     (float) : Conductivity of the metal layer
+				- epsilon_r (float) : Relative permitivity of the substrat in farad per meter.
+				- tan_delta (float) : Loss tangent.
+				- kappa     (float) : Conductivity of the metal layer in Siemens per meter.
 				
-				- w         (float) : Width of the central line in meter
-				- s         (float) : Width of the gap separation in meter
-				- t         (float) : Thickness of the metal layer in meter
-				- w_g       (float) : Width of the ground plane in meter
+				- w         (float) : Width of the central line in meter.
+				- s         (float) : Width of the gap separation in meter.
+				- t         (float) : Thickness of the metal layer in meter.
+				- w_g       (float) : Width of the ground plane in meter.
 		'''
 		
 		self._epsilon_r = epsilon_r
@@ -52,8 +53,7 @@ class CPW():
 		self._b   = self._w/2. + self._s
 		self._t_H = self._t/2.
 		
-		
-		self.lambda_0 = 40e-9
+#		self.lambda_0 = 40e-9
 	
 	def _variable_check(self, f):
 		'''Test of which type is the varible send and return numpy.ndarray of the variable'''
@@ -68,17 +68,47 @@ class CPW():
 	#################################################################################
 	#
 	#
-	#									Set geometric parameters
+	#									Set parameters
 	#
 	#
 	#################################################################################
+	
+	def set_kappa(self, kappa):
+		'''
+			Set the conductivity of the metallic layer.
+			
+			Input:
+				- kappa (float):Conductivity of the metallic layer in siemens per meter.
+		'''
+		
+		self._kappa = float(kappa)
+	
+	def set_tan_delta(self, tan_delta):
+		'''
+			Set the loss tangent of the metallic layer.
+			
+			Input:
+				- tan_delta (float): Loss tangent of the metallic layer.
+		'''
+		
+		self._tan_delta = float(tan_delta)
+	
+	def set_epsilon_r(self, epsilon_r):
+		'''
+			Set the epsilon_r of the substrat layer.
+			
+			Input:
+				- epsilon_r (float): Epsilon_r of the substrat layer in farad per meter.
+		'''
+		
+		self._epsilon_r = float(epsilon_r)
 	
 	def set_width_ground_plane(self, w_g):
 		'''
 			Set the thickness of the metal layer.
 			
 			Input:
-				- w (float): Thickness of the metal layer.
+				- w (float): Thickness of the metal layer in meter.
 		'''
 		
 		self._w_g = float(w_g)
@@ -88,7 +118,7 @@ class CPW():
 			Set the thickness of the metal layer.
 			
 			Input:
-				- w (float): Thickness of the metal layer.
+				- w (float): Thickness of the metal layer in meter.
 		'''
 		
 		self._t = float(t)
@@ -99,7 +129,7 @@ class CPW():
 			Set the width of the gap separation.
 			
 			Input:
-				- s (float): Width of the gap separation.
+				- s (float): Width of the gap separation in meter.
 		'''
 		
 		self._s = float(s)
@@ -110,7 +140,7 @@ class CPW():
 			Set the width of the central line.
 			
 			Input:
-				- w (float): Width of the central line in meter
+				- w (float): Width of the central line in meter.
 		'''
 		
 		self._w = float(w)
@@ -151,11 +181,11 @@ class CPW():
 	#
 	#
 	#################################################################################
-	def _g(self):
-		return (1./( 2*self._k0()**2*ellipk(self._k0())**2 ))*( -np.log(self._t/(4.*self._w)) - (self._w/(self._w + 2.*self._s)) * np.log(self._t/(4.*(self._w + 2.*self._s))) + ((2.*(self._w+self._s))/(self._w + 2.*self._s))*np.log(self._s/(self._w+self._s)) )
-	
-	def L_k(self):
-		return cst.mu_0*self.lambda_0**2*self._g()/(self._t*self._w)
+#	def _g(self):
+#		return (1./( 2*self._k0()**2*ellipk(self._k0())**2 ))*( -np.log(self._t/(4.*self._w)) - (self._w/(self._w + 2.*self._s)) * np.log(self._t/(4.*(self._w + 2.*self._s))) + ((2.*(self._w+self._s))/(self._w + 2.*self._s))*np.log(self._s/(self._w+self._s)) )
+#	
+#	def L_k(self):
+#		return cst.mu_0*self.lambda_0**2*self._g()/(self._t*self._w)
 	
 	#################################################################################
 	#

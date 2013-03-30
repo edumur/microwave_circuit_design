@@ -606,7 +606,7 @@ class CPW():
 				- Output :
 					- alpha coefficient
 		'''
-		return self.gamma(f).real
+		return self.get_gamma_per_unit_length(f).real
 	
 	def get_beta_per_unit_length(self, f):
 		'''Return the beta coefficient of the transmision line
@@ -616,7 +616,7 @@ class CPW():
 				- Output :
 					- Beta coefficient
 		'''
-		return self.gamma(f).imag
+		return self.get_gamma_per_unit_length(f).imag
 	
 	def get_velocity(self, f):
 		'''Return the velocity of the wave in the coplanar wave guide

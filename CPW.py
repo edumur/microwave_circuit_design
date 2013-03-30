@@ -73,7 +73,7 @@ class CPW():
 	#
 	#################################################################################
 	
-	def set_kappa(self, kappa):
+	def set_conductivity(self, kappa):
 		'''
 			Set the conductivity of the metallic layer.
 			
@@ -83,7 +83,7 @@ class CPW():
 		
 		self._kappa = float(kappa)
 	
-	def set_tan_delta(self, tan_delta):
+	def set_loss_tangent(self, tan_delta):
 		'''
 			Set the loss tangent of the metallic layer.
 			
@@ -93,7 +93,7 @@ class CPW():
 		
 		self._tan_delta = float(tan_delta)
 	
-	def set_epsilon_r(self, epsilon_r):
+	def set_relative_permittivity(self, epsilon_r):
 		'''
 			Set the epsilon_r of the substrat layer.
 			
@@ -147,19 +147,6 @@ class CPW():
 		self._a   = self._w/2.
 		self._b   = self._w/2. + self._s
 	
-	
-	#################################################################################
-	#
-	#
-	#									geometry parameters
-	#
-	#
-	#################################################################################
-	
-	def _defined_short_parameter(self):
-		self._a   = self._w/2.
-		self._b   = self._w/2. + self._s
-		self._t_H = self._t/2.
 	
 	#################################################################################
 	#
@@ -538,7 +525,7 @@ class CPW():
 	#
 	#################################################################################
 	
-	def L_l(self, f):
+	def get_inductance_per_unit_length(self, f):
 		'''Return the length inductance of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -547,7 +534,6 @@ class CPW():
 					- Length inductance (numpy.ndarray) in Henrys per meter
 		'''
 		
-		self._defined_short_parameter()
 		f = self._variable_check(f)
 		first_condition = np.ma.masked_less_equal(f, self._omega_L0()).mask
 		second_condition = np.ma.masked_less_equal(f, self._omega_L1()).mask
@@ -563,7 +549,7 @@ class CPW():
 			return self._L_inf() + np.sqrt(cst.mu_0/(2.*self._omega(f)*self._kappa))*((self._F_lc() + self._F_lg())/(4.*self._F_up(self._t/2.)**2.))*(1. + self._a_5L()*(self._omega_L2()/self._omega(f)))
 		
 	
-	def R_l(self, f):
+	def get_resistance_per_unit_length(self, f):
 		'''Return the length resistance of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -572,11 +558,10 @@ class CPW():
 					- Length resistance (numpy.ndarray) in Ohms per meter
 		'''
 		
-		self._defined_short_parameter()
 		f = self._variable_check(f)
 		return self._Rc(f) + self._Rg(f)
 	
-	def C_l(self, f):
+	def get_capacitance_per_unit_length(self, f):
 		'''Return the length capacitance of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -585,11 +570,10 @@ class CPW():
 					- Length capacitance (numpy.ndarray) in Farrad per meter
 		'''
 		
-		self._defined_short_parameter()
 		f = self._variable_check(f)
 		return np.array([2.*cst.epsilon_0*(self._F_up(self._t) + self._epsilon_r*self._F_low())]*len(f))
 	
-	def G_l(self, f):
+	def get_conductance_per_unit_length(self, f):
 		'''Return the length conductance of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -598,12 +582,11 @@ class CPW():
 					- Length conductance (numpy.ndarray) in Siemens per meter
 		'''
 		
-		self._defined_short_parameter()
 		f = self._variable_check(f)
 		return 2.*self._omega(f)*cst.epsilon_0*self._epsilon_r*self._tan_delta*self._F_low()
 	
-	def Z_0(self, f):
-		'''Return the norm of the characteristic impedance of the transmision line
+	def get_characteristic_impedance(self, f):
+		'''Return the absolute value of the characteristic impedance of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
@@ -611,12 +594,11 @@ class CPW():
 					- Characteristic impedance (numpy.ndarray) in Ohms
 		'''
 		
-		self._defined_short_parameter()
 		f = self._variable_check(f)
-		temp = np.sqrt((self.R_l(f) + 1j*self._omega(f)*self.L_l(f))/(self.G_l(f) + 1j*self._omega(f)*self.C_l(f)))
+		temp = np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))/(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)))
 		return np.sqrt(temp.real**2 + temp.imag**2)
 	
-	def gamma(self, f):
+	def get_gamma_per_unit_length(self, f):
 		'''Return the gamma coefficient of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -625,11 +607,10 @@ class CPW():
 					- Gamma coefficient (numpy.ndarray)
 		'''
 		
-		self._defined_short_parameter()
 		f = self._variable_check(f)
-		return np.sqrt((self.R_l(f) + 1j*self._omega(f)*self.L_l(f))*(self.G_l(f) + 1j*self._omega(f)*self.C_l(f)))
+		return np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))*(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)))
 	
-	def alpha(self, f):
+	def get_alpha_per_unit_length(self, f):
 		'''Return the alpha coefficient of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -639,7 +620,7 @@ class CPW():
 		'''
 		return self.gamma(f).real
 	
-	def beta(self, f):
+	def get_beta_per_unit_length(self, f):
 		'''Return the beta coefficient of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -649,7 +630,7 @@ class CPW():
 		'''
 		return self.gamma(f).imag
 	
-	def velocity(self, f):
+	def get_velocity(self, f):
 		'''Return the velocity of the wave in the coplanar wave guide
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -658,28 +639,27 @@ class CPW():
 					- Velocity (numpy.ndarray) in unit of c (speed of light)
 		'''
 		
-		self._defined_short_parameter()
 		f = self._variable_check(f)
 		
-		return 1./np.sqrt(self.C_l(f) * self.L_l(f))/cst.c
+		return 1./np.sqrt(self.get_capacitance_per_unit_length(f) * self.get_inductance_per_unit_length(f))/cst.c
 	
 	
-	def L_eq_lambda4(self, f, l):
-		
-		return 8.*l*self.L_l(f)/cst.pi**2.
-	
-	def C_eq_lambda4(self, f, l):
-		
-		return l*self.C_l(f)/2.
-	
-	def R_eq_lambda4(self, f, l):
-		
-		return self.Z_0(f)/self.alpha(f)/l
-	
-	def Q_lambda4(self, f, l):
-		
-		return cst.pi/(4.*self.alpha(f)*l)
-	
-	def resonance_frequency_lambda4(self, l):
-		f = 9e9
-		return 1./(2.*cst.pi*np.sqrt(self.L_eq_lambda4(f, l) * self.C_eq_lambda4(f, l)))
+#	def L_eq_lambda4(self, f, l):
+#		
+#		return 8.*l*self.L_l(f)/cst.pi**2.
+#	
+#	def C_eq_lambda4(self, f, l):
+#		
+#		return l*self.C_l(f)/2.
+#	
+#	def R_eq_lambda4(self, f, l):
+#		
+#		return self.Z_0(f)/self.alpha(f)/l
+#	
+#	def Q_lambda4(self, f, l):
+#		
+#		return cst.pi/(4.*self.alpha(f)*l)
+#	
+#	def resonance_frequency_lambda4(self, l):
+#		f = 9e9
+#		return 1./(2.*cst.pi*np.sqrt(self.L_eq_lambda4(f, l) * self.C_eq_lambda4(f, l)))

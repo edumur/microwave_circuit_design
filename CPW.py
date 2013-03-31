@@ -585,8 +585,7 @@ class CPW():
 					- Characteristic impedance in Ohms
 		'''
 		
-		temp = np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))/(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)))
-		return np.sqrt(temp.real**2 + temp.imag**2)
+		return abs(np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))/(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f))))
 	
 	def get_complex_wave_vector_per_unit_length(self, f):
 		'''Return the absolute value of the complex wave vector coefficient of the transmision line
@@ -665,13 +664,17 @@ class CPW():
 	#
 	#################################################################################
 	
-	def _residual_optimal_gap_separation(self, gapWidth, targetImpedance, targetFrequency):
+	def _residual_optimal_gap_separation(self, gapWidth, targetImpedance, targetFrequency, verbose):
 		
-		self.set_width_gap_separation(gapWidth)
+		if verbose :
+			
+			print 'Gap width:	'+str(abs(gapWidth))+'	m'
+		
+		self.set_width_gap_separation(abs(gapWidth))
 		
 		return self.get_characteristic_impedance(targetFrequency) - targetImpedance
 	
-	def find_optimal_gap_separation(self, targetImpedance, targetFrequency):
+	def find_optimal_gap_separation(self, targetImpedance, targetFrequency, verbose=False):
 		'''
 			Calculate the optimal gap width in order to get a choosen impedance.
 			
@@ -684,12 +687,15 @@ class CPW():
 		'''
 		
 		save = self._s
-		test = fsolve(self._residual_optimal_gap_separation, self._s ,args=(float(targetImpedance), float(targetFrequency)))
+		test = fsolve(self._residual_optimal_gap_separation, self._s ,args=(float(targetImpedance), float(targetFrequency), verbose))
 		
 		#If the result of the test is true, the optimization failed
 		if save == test[0]:
 			
+			#We set attributs like before
 			self._s = save
+			self._b   = self._w/2. + save
+			
 			raise Exception('The optimization failed for the following values: targetImpedance = '+str(targetImpedance)+' ohms and targetFrequency = '+str(targetFrequency)+' hertz.')
 		
 		else:

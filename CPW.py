@@ -640,19 +640,19 @@ class CPW():
 	#
 	#
 	#################################################################################
+	
+	def _residual_optimal_gap_separation(self, gapWidth, targetImpedance, targetFrequency):
 		
-		def _residual_optimal_gap_width(self, gapWidth, targetImpedance):
-			
-			self.set_width_gap_separation(gapWidth)
-			
-			return self.get_characteristic_impedance(self, 1e9) - gapWidth
+		self.set_width_gap_separation(gapWidth)
 		
-		def find_optimal_gap_width(self, targetImpedance):
-			
-			fsolve(self._residual_optimal_gap_width, self._s ,args=(float(targetImpedance)))
-			
-			
+		return self.get_characteristic_impedance(targetFrequency) - targetImpedance
+	
+	def find_optimal_gap_separation(self, targetImpedance, targetFrequency):
 		
+		fsolve(self._residual_optimal_gap_separation, self._s ,args=(float(targetImpedance), float(targetFrequency)))
+		
+		return self.get_characteristic_impedance(targetFrequency), self._s
+	
 	
 	
 #	def L_eq_lambda4(self, f, l):

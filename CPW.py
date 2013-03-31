@@ -22,6 +22,7 @@
 
 import scipy.constants as cst
 from scipy.special import ellipk, ellipe
+from scipy.optimize import fsolve
 import numpy as np
 
 class CPW():
@@ -628,6 +629,30 @@ class CPW():
 		'''
 		
 		return 1./np.sqrt(self.get_capacitance_per_unit_length(f) * self.get_inductance_per_unit_length(f))/cst.c
+	
+	
+	
+		
+	#################################################################################
+	#
+	#
+	#									Optimize
+	#
+	#
+	#################################################################################
+		
+		def _residual_optimal_gap_width(self, gapWidth, targetImpedance):
+			
+			self.set_width_gap_separation(gapWidth)
+			
+			return self.get_characteristic_impedance(self, 1e9) - gapWidth
+		
+		def find_optimal_gap_width(self, targetImpedance):
+			
+			fsolve(self._residual_optimal_gap_width, self._s ,args=(float(targetImpedance)))
+			
+			
+		
 	
 	
 #	def L_eq_lambda4(self, f, l):

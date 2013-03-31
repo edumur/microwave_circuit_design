@@ -631,7 +631,31 @@ class CPW():
 		return 1./np.sqrt(self.get_capacitance_per_unit_length(f) * self.get_inductance_per_unit_length(f))/cst.c
 	
 	
+		
+	#################################################################################
+	#
+	#
+	#									Optimize
+	#
+	#
+	#################################################################################
 	
+	def print_parameters(self):
+		'''
+			Summarize all parameters of the CPW object.
+		'''
+		
+		print '-------------------------------------'
+		print '			Parameters'
+		print ''
+		print '	Central line width:		'+str(self._w)+'		m'
+		print '	Gap separation width:		'+str(self._s)+'	m'
+		print '	Thickness:			'+str(self._t)+'		m'
+		print '	Ground plane width:		'+str(self._w_g)+'		m'
+		print ''
+		print '	Relative permitivity:		'+str(self._epsilon_r)+'		F/m'
+		print '	Loss tangente:			'+str(self._tan_delta)
+		print '	Electrical conductivity:	'+str(self._kappa)+'	S/m'
 		
 	#################################################################################
 	#

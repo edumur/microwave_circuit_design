@@ -672,6 +672,16 @@ class CPW():
 		return self.get_characteristic_impedance(targetFrequency) - targetImpedance
 	
 	def find_optimal_gap_separation(self, targetImpedance, targetFrequency):
+		'''
+			Calculate the optimal gap width in order to get a choosen impedance.
+			
+			Input:
+				- targetImpedance (float): Impedance choosen for the optimization in ohm.
+				- targetFrequency (float): Frequency at which the optimization will be calculated in Hz. Usually not important.
+			
+			Output:
+				- (finalImpedance, finalGapWidth): reach impedance in ohm, optimal gap width in meter.
+		'''
 		
 		fsolve(self._residual_optimal_gap_separation, self._s ,args=(float(targetImpedance), float(targetFrequency)))
 		

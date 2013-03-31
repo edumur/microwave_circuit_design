@@ -668,7 +668,7 @@ class CPW():
 		
 		if verbose :
 			
-			print 'Gap width:	'+str(abs(gapWidth))+'	m'
+			print 'Gap width:	'+str(abs(gapWidth[0]))+'	m'
 		
 		self.set_width_gap_separation(abs(gapWidth))
 		
@@ -681,6 +681,7 @@ class CPW():
 			Input:
 				- targetImpedance (float): Impedance choosen for the optimization in ohm.
 				- targetFrequency (float): Frequency at which the optimization will be calculated in Hz. Usually not important.
+				- verbose (booleen) : Allows the display of the gap width during the optimization
 			
 			Output:
 				- (finalImpedance, finalGapWidth): reach impedance in ohm, optimal gap width in meter.

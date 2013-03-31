@@ -645,7 +645,7 @@ class CPW():
 			Summarize all parameters of the CPW object.
 		'''
 		
-		print '-------------------------------------'
+		print '------------------------------------------------------------'
 		print '			Parameters'
 		print ''
 		print '	Central line width:		'+str(self._w)+'		m'

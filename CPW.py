@@ -683,9 +683,18 @@ class CPW():
 				- (finalImpedance, finalGapWidth): reach impedance in ohm, optimal gap width in meter.
 		'''
 		
-		fsolve(self._residual_optimal_gap_separation, self._s ,args=(float(targetImpedance), float(targetFrequency)))
+		save = self._s
+		test = fsolve(self._residual_optimal_gap_separation, self._s ,args=(float(targetImpedance), float(targetFrequency)))
 		
-		return self.get_characteristic_impedance(targetFrequency), self._s
+		#If the result of the test is true, the optimization failed
+		if save == test[0]:
+			
+			self._s = save
+			raise Exception('The optimization failed for the following values: targetImpedance = '+str(targetImpedance)+' ohms and targetFrequency = '+str(targetFrequency)+' hertz.')
+		
+		else:
+			
+			return self.get_characteristic_impedance(targetFrequency), self._s
 	
 	
 	

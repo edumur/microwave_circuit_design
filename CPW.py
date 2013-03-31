@@ -588,36 +588,36 @@ class CPW():
 		temp = np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))/(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)))
 		return np.sqrt(temp.real**2 + temp.imag**2)
 	
-	def get_gamma_per_unit_length(self, f):
-		'''Return the gamma coefficient of the transmision line
+	def get_complex_wave_vector_per_unit_length(self, f):
+		'''Return the absolute value of the complex wave vector coefficient of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- Gamma coefficient
+					- Absolute value of the complex wave vector coefficient
 		'''
 		
-		return np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))*(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)))
+		return abs(np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))*(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f))))
 	
-	def get_alpha_per_unit_length(self, f):
-		'''Return the alpha coefficient of the transmision line
+	def get_attenuation_per_unit_length(self, f):
+		'''Return the attenuation coefficient of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
-					- alpha coefficient
+					- Attenuation coefficient
 		'''
-		return self.get_gamma_per_unit_length(f).real
+		return ((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))*(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f))).real
 	
-	def get_beta_per_unit_length(self, f):
-		'''Return the beta coefficient of the transmision line
+	def get_wave_vector_per_unit_length(self, f):
+		'''Return the wave vector coefficient of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
 				
 				- Output :
 					- Beta coefficient
 		'''
-		return self.get_gamma_per_unit_length(f).imag
+		return ((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))*(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f))).imag
 	
 	def get_velocity(self, f):
 		'''Return the velocity of the wave in the coplanar wave guide

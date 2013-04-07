@@ -59,7 +59,7 @@ class CPW():
 	#################################################################################
 	#
 	#
-	#									Set parameters
+	#									Set/Get parameters
 	#
 	#
 	#################################################################################
@@ -74,6 +74,16 @@ class CPW():
 		
 		self._kappa = float(kappa)
 	
+	def get_conductivity(self):
+		'''
+			Get the conductivity of the metallic layer.
+			
+			Output:
+				- kappa (float):Conductivity of the metallic layer in siemens per meter.
+		'''
+		
+		return self._kappa
+	
 	def set_loss_tangent(self, tan_delta):
 		'''
 			Set the loss tangent of the metallic layer.
@@ -83,6 +93,16 @@ class CPW():
 		'''
 		
 		self._tan_delta = float(tan_delta)
+	
+	def get_loss_tangent(self):
+		'''
+			Get the loss tangent of the metallic layer.
+			
+			Output:
+				- tan_delta (float): Loss tangent of the metallic layer.
+		'''
+		
+		return self._tan_delta
 	
 	def set_relative_permittivity(self, epsilon_r):
 		'''
@@ -94,6 +114,16 @@ class CPW():
 		
 		self._epsilon_r = float(epsilon_r)
 	
+	def get_relative_permittivity(self):
+		'''
+			Get the epsilon_r of the substrat layer.
+			
+			Output:
+				- epsilon_r (float): Epsilon_r of the substrat layer in farad per meter.
+		'''
+		
+		return self._epsilon_r
+	
 	def set_width_ground_plane(self, w_g):
 		'''
 			Set the thickness of the metal layer.
@@ -103,6 +133,16 @@ class CPW():
 		'''
 		
 		self._w_g = float(w_g)
+	
+	def get_width_ground_plane(self):
+		'''
+			Get the thickness of the metal layer.
+			
+			Output:
+				- w (float): Thickness of the metal layer in meter.
+		'''
+		
+		return self._w_g
 	
 	def set_thickness(self, t):
 		'''
@@ -115,6 +155,16 @@ class CPW():
 		self._t = float(t)
 		self._t_H = self._t/2.
 	
+	def get_thickness(self):
+		'''
+			Get the thickness of the metal layer.
+			
+			Output:
+				- w (float): Thickness of the metal layer in meter.
+		'''
+		
+		return self._t
+	
 	def set_width_gap_separation(self, s):
 		'''
 			Set the width of the gap separation.
@@ -125,6 +175,16 @@ class CPW():
 		
 		self._s = float(s)
 		self._b   = self._w/2. + self._s
+	
+	def get_width_gap_separation(self):
+		'''
+			Get the width of the gap separation.
+			
+			Output:
+				- s (float): Width of the gap separation in meter.
+		'''
+		
+		return self._s
 	
 	def set_width_central_line(self, w):
 		'''
@@ -137,6 +197,16 @@ class CPW():
 		self._w = float(w)
 		self._a   = self._w/2.
 		self._b   = self._w/2. + self._s
+	
+	def get_width_central_line(self):
+		'''
+			Get the width of the central line.
+			
+			Output:
+				- w (float): Width of the central line in meter.
+		'''
+		
+		return self._w
 	
 	
 	#################################################################################
@@ -226,6 +296,11 @@ class CPW():
 		return (self._t**2/12. - x**2/2.)*np.log(1. + (x/self._t)**2) + (x**4/(12*self._t**2))*np.log(1. + (self._t/x)**2) - ((2.*x*self._t)/3.)*(np.arctan(x/self._t + (x/self._t)**2)*np.arctan(self._t/x))
 	
 	def _L_1(self):
+#		if self._L_DC(self._w, 3.*self._w/2.) - cst.mu_0/4./self._F1() < 0.:
+#			
+#			raise Exception('Parameter impossible to satisfy')
+#		else:
+		
 		return self._L_DC(self._w, 3.*self._w/2.) - cst.mu_0/4./self._F1()
 	
 	def _L_2(self):
@@ -361,7 +436,6 @@ class CPW():
 	#################################################################################
 	
 	def _omega_c1(self):
-		
 		return np.sqrt(2.)*(4./(cst.mu_0*self._kappa*self._t*self._w))
 	
 	def _omega_c2(self):
@@ -666,9 +740,7 @@ class CPW():
 	
 	def _residual_optimal_gap_separation(self, gapWidth, targetImpedance, targetFrequency, verbose):
 		
-		if verbose :
-			
-			print 'Gap width:	'+str(abs(gapWidth[0]))+'	m'
+		print 'Gap width:	'+str(abs(gapWidth[0]))+'	m'
 		
 		self.set_width_gap_separation(abs(gapWidth))
 		
@@ -691,7 +763,7 @@ class CPW():
 		test = fsolve(self._residual_optimal_gap_separation, self._s ,args=(float(targetImpedance), float(targetFrequency), verbose))
 		
 		#If the result of the test is true, the optimization failed
-		if save == test[0]:
+		if save == test[0] or np.isnan(self._s):
 			
 			#We set attributs like before
 			self._s = save

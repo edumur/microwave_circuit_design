@@ -54,8 +54,6 @@ class CPW():
 		self._b   = self._w/2. + self._s
 		self._t_H = self._t/2.
 		
-#		self.lambda_0 = 40e-9
-	
 	#################################################################################
 	#
 	#
@@ -225,19 +223,6 @@ class CPW():
 	#################################################################################
 	#
 	#
-	#									Kinetic inductance calculation
-	#
-	#
-	#################################################################################
-#	def _g(self):
-#		return (1./( 2*self._k0()**2*ellipk(self._k0())**2 ))*( -np.log(self._t/(4.*self._w)) - (self._w/(self._w + 2.*self._s)) * np.log(self._t/(4.*(self._w + 2.*self._s))) + ((2.*(self._w+self._s))/(self._w + 2.*self._s))*np.log(self._s/(self._w+self._s)) )
-#	
-#	def L_k(self):
-#		return cst.mu_0*self.lambda_0**2*self._g()/(self._t*self._w)
-	
-	#################################################################################
-	#
-	#
 	#									ki coefficients
 	#
 	#
@@ -296,11 +281,6 @@ class CPW():
 		return (self._t**2/12. - x**2/2.)*np.log(1. + (x/self._t)**2) + (x**4/(12*self._t**2))*np.log(1. + (self._t/x)**2) - ((2.*x*self._t)/3.)*(np.arctan(x/self._t + (x/self._t)**2)*np.arctan(self._t/x))
 	
 	def _L_1(self):
-#		if self._L_DC(self._w, 3.*self._w/2.) - cst.mu_0/4./self._F1() < 0.:
-#			
-#			raise Exception('Parameter impossible to satisfy')
-#		else:
-		
 		return self._L_DC(self._w, 3.*self._w/2.) - cst.mu_0/4./self._F1()
 	
 	def _L_2(self):
@@ -661,7 +641,7 @@ class CPW():
 		
 		return abs(np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))/(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f))))
 	
-	def get_complex_wave_vector_per_unit_length(self, f):
+	def get_complex_wave_vector(self, f):
 		'''Return the absolute value of the complex wave vector coefficient of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -672,7 +652,7 @@ class CPW():
 		
 		return abs(np.sqrt((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))*(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f))))
 	
-	def get_attenuation_per_unit_length(self, f):
+	def get_attenuation(self, f):
 		'''Return the attenuation coefficient of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -682,7 +662,7 @@ class CPW():
 		'''
 		return ((self.get_resistance_per_unit_length(f) + 1j*self._omega(f)*self.get_inductance_per_unit_length(f))*(self.get_conductance_per_unit_length(f) + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f))).real
 	
-	def get_wave_vector_per_unit_length(self, f):
+	def get_wave_vector(self, f):
 		'''Return the wave vector coefficient of the transmision line
 				- Input :
 					- Frequency (float | list | numpy.ndarray) in Hertz
@@ -708,7 +688,7 @@ class CPW():
 	#################################################################################
 	#
 	#
-	#									Optimize
+	#									Print methods
 	#
 	#
 	#################################################################################
@@ -729,6 +709,24 @@ class CPW():
 		print '	Relative permitivity:		'+str(self._epsilon_r)+'		F/m'
 		print '	Loss tangente:			'+str(self._tan_delta)
 		print '	Electrical conductivity:	'+str(self._kappa)+'	S/m'
+	
+	def print_results(self, frequency):
+		'''
+			Summarize all results of the CPW object.
+		'''
+		
+		print '------------------------------------------------------------'
+		print '			Results'
+		print ''
+		print '	Inductance per unit length:	'+str(self.get_inductance_per_unit_length(frequency))+'	H/m'
+		print '	Capacitance per unit length:	'+str(self.get_capacitance_per_unit_length(frequency))+'	F/m'
+		print '	Resistance per unit length:	'+str(self.get_resistance_per_unit_length(frequency))+'	ohm/m'
+		print '	Conductance per unit length:	'+str(self.get_conductance_per_unit_length(frequency))+'	S/m'
+		print ''
+		print '	Attenuation:			'+str(self.get_attenuation(frequency))+'	/m'
+		print '	Wave vector:			'+str(self.get_wave_vector(frequency))+'	/m'
+		print '	Velocity:			'+str(self.get_velocity(frequency))+'	c'
+		print '	Characteristic impedance:	'+str(self.get_characteristic_impedance(frequency))+'	ohm'
 		
 	#################################################################################
 	#
@@ -774,25 +772,3 @@ class CPW():
 		else:
 			
 			return self.get_characteristic_impedance(targetFrequency), self._s
-	
-	
-	
-#	def L_eq_lambda4(self, f, l):
-#		
-#		return 8.*l*self.L_l(f)/cst.pi**2.
-#	
-#	def C_eq_lambda4(self, f, l):
-#		
-#		return l*self.C_l(f)/2.
-#	
-#	def R_eq_lambda4(self, f, l):
-#		
-#		return self.Z_0(f)/self.alpha(f)/l
-#	
-#	def Q_lambda4(self, f, l):
-#		
-#		return cst.pi/(4.*self.alpha(f)*l)
-#	
-#	def resonance_frequency_lambda4(self, l):
-#		f = 9e9
-#		return 1./(2.*cst.pi*np.sqrt(self.L_eq_lambda4(f, l) * self.C_eq_lambda4(f, l)))

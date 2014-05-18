@@ -10,14 +10,23 @@ Example:
 
 `````python
 
-import CPW as CPW
+import CPW
 
 line = CPW.CPW()
 
+//You can change your cpw parameters thanks to set method
 line.set_thickness(0.5e-6)
+line.set_width_central_line(10e-6)
 
+//You can easily calculate physical parameters
 line.get_inductance_per_unit_length(2e9)
-//4.26e-7
+>>>>4.26e-7
+line.get_velocity(2e9)
+>>>>0.399
+
+//You can optimized your chracteristic impedance
+a.find_optimal_gap_separation(50., 10e9)
+>>>>(49.9999, 5.38152e-6)
 
 `````
 

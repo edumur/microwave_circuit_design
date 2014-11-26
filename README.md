@@ -31,7 +31,7 @@ a.find_optimal_gap_separation(50., 10e9)
 `````
 
 
-This class is based on an article of Wolfgang Hainrich
+This class is based on an article of Wolfgang Heinrich
 "Quasi-TEM Description of MMIC coplanar Lines Including onductor-Loss Effects"
  IEEE Transactions on Microwave Theory And Techniques, vol 41, n° 1, January 1993
 

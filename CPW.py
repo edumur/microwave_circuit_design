@@ -1,25 +1,27 @@
 #!/usr/local/bin/python
 # This Python file uses the following encoding: utf-8
 
-#Based on an article of Wolfgang Hainrich
-#"Quasi-TEM Description of MMIC coplanar Lines Including onductor-Loss Effects"
-# IEEE Transactions on Microwave Theory And Techniques, vol 41, n° 1, January 1993
+# Based on an article of Wolfgang Hainrich
+# "Quasi-TEM Description of MMIC coplanar Lines Including onductor-Loss
+#  Effects"
+# IEEE Transactions on Microwave Theory And Techniques, vol 41, n° 1,
+# January 1993
 
-#Copyright (C) 2013 Dumur Étienne
+# Copyright (C) 2013 Dumur Étienne
 
-#This program is free software; you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation; either version 2 of the License, or
-#(at your option) any later version.
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 
-#This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
 
-#You should have received a copy of the GNU General Public License along
-#with this program; if not, write to the Free Software Foundation, Inc.,
-#51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import scipy.constants as cst
 from scipy.special import ellipk, ellipkm1, ellipe
@@ -28,13 +30,17 @@ import numpy as np
 
 class CPW():
 
-    def __init__(self, epsilon_r = 11.68, tan_delta = 7e-4, kappa = 3.53e50, w = 19e-6, s = 11.5e-6, t = 100e-9, w_g = 200e-6):
-        '''Class allowing the calculation of the RLCG parameters for a coplanar waveguide (cpw).
+    def __init__(self, epsilon_r = 11.68, tan_delta = 7e-4, kappa = 3.53e50,
+                       w = 19e-6, s = 11.5e-6, t = 100e-9, w_g = 200e-6):
+        '''Class allowing the calculation of the RLCG parameters for a
+           coplanar waveguide (cpw).
 
             Input:
-                - epsilon_r (float) : Relative permitivity of the substrat in farad per meter.
+                - epsilon_r (float) : Relative permitivity of the substrat in
+                                      farad per meter.
                 - tan_delta (float) : Loss tangent without dimension.
-                - kappa     (float) : Conductivity of the metal layer in Siemens per meter.
+                - kappa     (float) : Conductivity of the metal layer in
+                                      siemens per meter.
 
                 - w         (float) : Width of the central line in meter.
                 - s         (float) : Width of the gap separation in meter.
@@ -55,20 +61,21 @@ class CPW():
         self._b   = self._w/2. + self._s
         self._t_H = self._t/2.
 
-    #################################################################################
+    ##########################################################################
     #
     #
     #                                    Set/Get parameters
     #
     #
-    #################################################################################
+    ##########################################################################
 
     def set_conductivity(self, kappa):
         '''
             Set the conductivity of the metallic layer.
 
             Input:
-                - kappa (float):Conductivity of the metallic layer in siemens per meter.
+                - kappa (float): Conductivity of the metallic layer in siemens
+                                 per meter.
         '''
 
         self._kappa = float(kappa)
@@ -78,7 +85,8 @@ class CPW():
             Get the conductivity of the metallic layer.
 
             Output:
-                - kappa (float):Conductivity of the metallic layer in siemens per meter.
+                - kappa (float): Conductivity of the metallic layer in siemens
+                                 per meter.
         '''
 
         return self._kappa

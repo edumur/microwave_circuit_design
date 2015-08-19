@@ -61,7 +61,7 @@ class CPW(object):
         self._t_H = self._t/2.
 
         # Limit above which the class doesn't use ellipk but ellipkm1
-        self.ellipk_limit = 0.99
+        self._ellipk_limit = 0.99
 
     ##########################################################################
     #
@@ -174,7 +174,7 @@ class CPW(object):
 
         m = k**2.
 
-        if m < self.ellipk_limit:
+        if m < self._ellipk_limit:
             return ellipk(m)
         else:
             return ellipkm1(m)

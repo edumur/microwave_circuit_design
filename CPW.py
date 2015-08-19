@@ -961,6 +961,9 @@ class CPW():
             Summarize all results of the CPW object.
         '''
 
+        if type(frequency) is not float:
+            raise ValueError('Frequency parameter should be float type')
+
         Ll   = self.get_inductance_per_unit_length(frequency)
         Ll_p, Ll_t = self._parse_number(Ll, precision)
 

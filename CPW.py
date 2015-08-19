@@ -247,11 +247,6 @@ class CPW():
 
         m = k**2.
 
-        if m < 0.:
-            raise ValueError('The argument of the elliptic integral has to be strictly positive.')
-        if m > 1.:
-            raise ValueError('The argument of the elliptic integral has to be smaller than one.')
-
         if m < self.ellipk_limit:
             return ellipk(m)
         else:
@@ -307,7 +302,7 @@ class CPW():
                  /self._b
 
     def _pc3(self):
-        return (2.*self._b**2.*ellipe(np.sqrt(1. - self._k0()**2.)))\
+        return (2.*self._b**2.*ellipe(1. - self._k0()**2.))\
                /(self._a*(self._b + self._a)\
                 *self._ellipk(np.sqrt(1. - self._k0()**2.)))
 

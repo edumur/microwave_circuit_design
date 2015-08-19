@@ -857,7 +857,7 @@ class CPW():
         b = self.get_conductance_per_unit_length(f)\
             + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)
 
-        c = a + b
+        c = np.sqrt(a + b)
 
         return c.real, c.imag
 
@@ -870,12 +870,10 @@ class CPW():
                 - Output :
                     - Attenuation coefficient
         '''
-        a = self.get_resistance_per_unit_length(f)\
-            + 1j*self._omega(f)*self.get_inductance_per_unit_length(f)
-        b = self.get_conductance_per_unit_length(f)\
-            + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)
 
-        return (a + b).real
+        r, i = self.get_complex_wave_vector(f)
+
+        return r
 
     def get_wave_vector(self, f):
         '''Return the wave vector coefficient of the transmision line
@@ -883,14 +881,12 @@ class CPW():
                     - Frequency (float | list | numpy.ndarray) in Hertz
 
                 - Output :
-                    - Beta coefficient
+                    - Wave vector
         '''
-        a = self.get_resistance_per_unit_length(f)\
-            + 1j*self._omega(f)*self.get_inductance_per_unit_length(f)
-        b = self.get_conductance_per_unit_length(f)\
-            + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)
 
-        return (a + b).imag
+        r, i = self.get_complex_wave_vector(f)
+
+        return i
 
     def get_velocity(self, f):
         '''Return the velocity of the wave in the coplanar wave guide

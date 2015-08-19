@@ -61,6 +61,9 @@ class CPW():
         self._b   = self._w/2. + self._s
         self._t_H = self._t/2.
 
+        # Limit above which the class doesn't use ellipk but ellipkm1
+        self.ellipk_limit = 0.99
+
     ##########################################################################
     #
     #
@@ -231,23 +234,25 @@ class CPW():
         return 2.*cst.pi*f
 
 
-    def _ellipk(self, m):
+    def _ellipk(self, k):
         '''
-            Handle the calculation of the elliptic integral thank scipy
-            special functions.
+            Handle the calculation of the elliptic integral thanks to scipy
+            special functions module.
             First we have to precise that with the scipy documention
             definition of ellipk or ellipkm1,
             the argument of these function are m = k**2.
-            Next the current method will use ellipk when 0<=m<0.5 and
-            0.5<=ellipkm1<=1
+            Next the current method will use ellipk or ellipkm1 following
+            the value of m
         '''
 
-        if m<0.:
+        m = k**2.
+
+        if m < 0.:
             raise ValueError('The argument of the elliptic integral has to be strictly positive.')
-        if m >1.:
+        if m > 1.:
             raise ValueError('The argument of the elliptic integral has to be smaller than one.')
 
-        if m < 0.99:
+        if m < self.ellipk_limit:
             return ellipk(m)
         else:
             return ellipkm1(m)

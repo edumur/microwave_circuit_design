@@ -25,7 +25,6 @@
 
 import scipy.constants as cst
 from scipy.special import ellipk, ellipkm1, ellipe
-from scipy.optimize import fsolve
 import numpy as np
 
 class CPW():

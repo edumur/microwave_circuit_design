@@ -842,20 +842,25 @@ class CPW():
         return abs(np.sqrt(a/b))
 
     def get_complex_wave_vector(self, f):
-        '''Return the absolute value of the complex wave vector coefficient of
-           the transmision line
+        '''Return the real and imaginary part of the complex wave vector
+        coefficient of the transmision line
                 - Input :
                     - Frequency (float | list | numpy.ndarray) in Hertz
 
                 - Output :
-                    - Absolute value of the complex wave vector coefficient
+                    - (real, imag) : (float[np.ndarray], float|np.ndarray)
+                                     real and imaginary value of the complex
+                                     wave vector
         '''
         a = self.get_resistance_per_unit_length(f)\
             + 1j*self._omega(f)*self.get_inductance_per_unit_length(f)
         b = self.get_conductance_per_unit_length(f)\
             + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)
 
-        return abs(np.sqrt(a*b))
+        c = a + b
+
+        return c.real, c.imag
+
 
     def get_attenuation(self, f):
         '''Return the attenuation coefficient of the transmision line

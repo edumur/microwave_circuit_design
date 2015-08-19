@@ -27,7 +27,7 @@ import scipy.constants as cst
 from scipy.special import ellipk, ellipkm1, ellipe
 import numpy as np
 
-class CPW():
+class CPW(object):
 
     def __init__(self, epsilon_r = 11.68, tan_delta = 7e-4, kappa = 3.53e50,
                        w = 19e-6, s = 11.5e-6, t = 100e-9, w_g = 200e-6):
@@ -66,159 +66,87 @@ class CPW():
     ##########################################################################
     #
     #
-    #                                    Set/Get parameters
+    #                                    Parameters
     #
     #
     ##########################################################################
 
-    def set_conductivity(self, kappa):
-        '''
-            Set the conductivity of the metallic layer.
-
-            Input:
-                - kappa (float): Conductivity of the metallic layer in siemens
-                                 per meter.
-        '''
-
-        self._kappa = float(kappa)
-
-    def get_conductivity(self):
-        '''
-            Get the conductivity of the metallic layer.
-
-            Output:
-                - kappa (float): Conductivity of the metallic layer in siemens
-                                 per meter.
-        '''
+    @property
+    def conductivity(self):
+        '''Conductivity of the metallic layer in siemens per meter.'''
 
         return self._kappa
 
-    def set_loss_tangent(self, tan_delta):
-        '''
-            Set the loss tangent of the metallic layer without dimension.
+    @conductivity.setter
+    def conductivity(self, value):
+        self._kappa = float(value)
 
-            Input:
-                - tan_delta (float): Loss tangent of the metallic layer.
-        '''
-
-        self._tan_delta = float(tan_delta)
-
-    def get_loss_tangent(self):
-        '''
-            Get the loss tangent of the metallic layer.
-
-            Output:
-                - tan_delta (float): Loss tangent of the metallic layer.
-        '''
+    @property
+    def loss_tangent(self):
+        '''Loss tangent of the metallic layer without dimension.'''
 
         return self._tan_delta
 
-    def set_relative_permittivity(self, epsilon_r):
-        '''
-            Set the epsilon_r of the substrat layer.
+    @loss_tangent.setter
+    def loss_tangent(self, value):
+        self._tan_delta = float(value)
 
-            Input:
-                - epsilon_r (float): Epsilon_r of the substrat layer in farad
-                                     per meter.
-        '''
-
-        self._epsilon_r = float(epsilon_r)
-
-    def get_relative_permittivity(self):
-        '''
-            Get the epsilon_r of the substrat layer.
-
-            Output:
-                - epsilon_r (float): Epsilon_r of the substrat layer in farad
-                                     per meter.
-        '''
+    @property
+    def relative_permittivity(self):
+        '''Relative permittivity of the substrat layer in farad per meter.'''
 
         return self._epsilon_r
 
-    def set_width_ground_plane(self, w_g):
-        '''
-            Set the thickness of the metal layer.
+    @relative_permittivity.setter
+    def relative_permittivity(self, value):
+        self._epsilon_r = float(value)
 
-            Input:
-                - w (float): Thickness of the metal layer in meter.
-        '''
-
-        self._w_g = float(w_g)
-
-    def get_width_ground_plane(self):
-        '''
-            Get the thickness of the metal layer.
-
-            Output:
-                - w (float): Thickness of the metal layer in meter.
-        '''
+    @property
+    def width_ground_plane(self):
+        '''Width of the coplanar ground plane in meter.'''
 
         return self._w_g
 
-    def set_thickness(self, t):
-        '''
-            Set the thickness of the metal layer.
+    @width_ground_plane.setter
+    def width_ground_plane(self, value):
+        self._w_g = float(value)
 
-            Input:
-                - w (float): Thickness of the metal layer in meter.
-        '''
-
-        self._t = float(t)
-        self._t_H = self._t/2.
-
-    def get_thickness(self):
-        '''
-            Get the thickness of the metal layer.
-
-            Output:
-                - w (float): Thickness of the metal layer in meter.
-        '''
+    @property
+    def thickness(self):
+        '''Thickness of the metal layer in meter.'''
 
         return self._t
 
-    def set_width_gap_separation(self, s):
-        '''
-            Set the width of the gap separation.
+    @thickness.setter
+    def thickness(self, value):
 
-            Input:
-                - s (float): Width of the gap separation in meter.
-        '''
+        self._t = float(value)
+        self._t_H = self._t/2.
 
-        self._s = float(s)
-        self._b   = self._w/2. + self._s
-
-    def get_width_gap_separation(self):
-        '''
-            Get the width of the gap separation.
-
-            Output:
-                - s (float): Width of the gap separation in meter.
-        '''
+    @property
+    def width_gap_separation(self):
+        '''Width of the gap separation in meter.'''
 
         return self._s
 
-    def set_width_central_line(self, w):
-        '''
-            Set the width of the central line.
+    @width_gap_separation.setter
+    def width_gap_separation(self, value):
 
-            Input:
-                - w (float): Width of the central line in meter.
-        '''
-
-        self._w = float(w)
-        self._a   = self._w/2.
+        self._s = float(value)
         self._b   = self._w/2. + self._s
 
-    def get_width_central_line(self):
-        '''
-            Get the width of the central line.
-
-            Output:
-                - w (float): Width of the central line in meter.
-        '''
+    @property
+    def width_central_line(self):
+        '''Width of the central line in meter.'''
 
         return self._w
 
+    @width_central_line.setter
+    def width_central_line(self, value):
+
+        self._w = float(value)
+        self._a   = self._w/2.
+        self._b   = self._w/2. + self._s
 
     ##########################################################################
     #
@@ -229,7 +157,7 @@ class CPW():
     ##########################################################################
 
     def _omega(self, f):
-        '''Return the impulsion to a frequency'''
+        '''Return the angular frequency'''
         return 2.*cst.pi*f
 
 

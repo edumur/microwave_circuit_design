@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # This Python file uses the following encoding: utf-8
 
-# Based on an article of Wolfgang Hainrich
+# Based on an article of Wolfgang Heinrich
 # "Quasi-TEM Description of MMIC coplanar Lines Including onductor-Loss
 #  Effects"
 # IEEE Transactions on Microwave Theory And Techniques, vol 41, n° 1,
@@ -29,10 +29,17 @@ import numpy as np
 
 class CPW(object):
 
+
+
     def __init__(self, epsilon_r = 11.68, tan_delta = 7e-4, kappa = 3.53e50,
                        w = 19e-6, s = 11.5e-6, t = 100e-9, w_g = 200e-6):
         '''Class allowing the calculation of the RLCG parameters for a
            coplanar waveguide (cpw).
+            Based on an article of Wolfgang Heinrich
+            "Quasi-TEM Description of MMIC coplanar Lines Including
+            Conductor-Loss Effects"
+            IEEE Transactions on Microwave Theory And Techniques, vol 41, n° 1,
+            January 1993
 
             Input:
                 - epsilon_r (float) : Relative permitivity of the substrat in
@@ -62,6 +69,33 @@ class CPW(object):
 
         # Limit above which the class doesn't use ellipk but ellipkm1
         self._ellipk_limit = 0.99
+
+
+
+    def __repr__(self):
+
+        w_p, w_t = self._parse_number(self._w, 3)
+        s_p, s_t = self._parse_number(self._s, 3)
+        t_p, t_t = self._parse_number(self._t, 3)
+        w_g_p, w_g_t = self._parse_number(self._w_g, 3)
+        e_r_p, e_r_t = self._parse_number(self._epsilon_r, 3)
+        kappa_p, kappa_t = self._parse_number(self._kappa, 3)
+
+        b = int(np.log10(self._tan_delta))
+        c = self._tan_delta*10**-b
+
+        return 'CoPlanar Waveguide instanced with following parameters:\n'\
+               '\n'\
+               '    Geometrical parameters:\n'\
+               '        Central line width:      '+w_p+' '+w_t+'m\n'\
+               '        Gap separation width:    '+s_p+' '+s_t+'m\n'\
+               '        Thickness:               '+t_p+' '+t_t+'m\n'\
+               '        Ground plane width:      '+w_g_p+' '+w_g_t+'m\n'\
+               '\n'\
+               '    Electrical parameters:\n'\
+               '        Relative permitivity:    '+e_r_p+' '+e_r_t+'F/m\n'\
+               '        Loss tangente:           '+str(c)+'e'+str(b)+'\n'\
+               '        Electrical conductivity: '+kappa_p+' '+kappa_t+'S/m\n'\
 
     ##########################################################################
     #
@@ -866,22 +900,6 @@ class CPW(object):
         else:
             return str(round(number, precision)), ''
 
-    def print_parameters(self):
-        '''
-            Summarize all parameters of the CPW object.
-        '''
-
-        print '------------------------------------------------------------'
-        print '            Parameters'
-        print ''
-        print '    Central line width:        '+str(self._w)+'\tm'
-        print '    Gap separation width:        '+str(self._s)+'\tm'
-        print '    Thickness:            '+str(self._t)+'\tm'
-        print '    Ground plane width:        '+str(self._w_g)+'\tm'
-        print ''
-        print '    Relative permitivity:        '+str(self._epsilon_r)+'\tF/m'
-        print '    Loss tangente:            '+str(self._tan_delta)
-        print '    Electrical conductivity:    '+str(self._kappa)+'\tS/m'
 
     def print_results(self, frequency, precision=3):
         '''

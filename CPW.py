@@ -811,7 +811,7 @@ class CPW():
         '''
 
         return 2.*cst.epsilon_0*(self._F_up(self._t)\
-               + self._epsilon_r*self._F_low())
+                                 + self._epsilon_r*self._F_low())
 
     def get_conductance_per_unit_length(self, f):
         '''Return the length conductance of the transmision line
@@ -909,6 +909,35 @@ class CPW():
     #
     ##########################################################################
 
+    def _parse_number(self, number, precision, inverse = False):
+
+        power_ten = int(np.log10(number))/3*3
+
+        if power_ten >= -24 and power_ten <= 18 :
+
+            prefix = {-24 : 'y',
+                      -21 : 'z',
+                      -18 : 'a',
+                      -15 : 'p',
+                      -12 : 'p',
+                       -9 : 'n',
+                       -6 : 'µ',
+                       -3 : 'm',
+                        0 : '',
+                        3 : 'k',
+                        6 : 'M',
+                        9 : 'G',
+                       12 : 'T',
+                       15 : 'p',
+                       18 : 'E'}
+
+            if inverse:
+                return str(round(number*10.**-power_ten, precision)), prefix[-power_ten]
+            else:
+                return str(round(number*10.**-power_ten, precision)), prefix[power_ten]
+        else:
+            return str(round(number, precision)), ''
+
     def print_parameters(self):
         '''
             Summarize all parameters of the CPW object.
@@ -926,28 +955,45 @@ class CPW():
         print '    Loss tangente:            '+str(self._tan_delta)
         print '    Electrical conductivity:    '+str(self._kappa)+'\tS/m'
 
-    def print_results(self, frequency):
+    def print_results(self, frequency, precision=3):
         '''
             Summarize all results of the CPW object.
         '''
 
+        Ll   = self.get_inductance_per_unit_length(frequency)
+        Ll_p, Ll_t = self._parse_number(Ll, precision)
+
+        Cl = self.get_capacitance_per_unit_length(frequency)
+        Cl_p, Cl_t = self._parse_number(Cl, precision)
+
+        Rl = self.get_resistance_per_unit_length(frequency)
+        Rl_p, Rl_t = self._parse_number(Rl, precision)
+
+        Gl = self.get_conductance_per_unit_length(frequency)
+        Gl_p, Gl_t = self._parse_number(Gl, precision)
+
+        a = self.get_attenuation(frequency)
+        a_p, a_t = self._parse_number(a, precision, inverse=True)
+
+        w = self.get_wave_vector(frequency)
+        w_p, w_t = self._parse_number(w, precision, inverse=True)
+
+        v = self.get_velocity(frequency)
+        v_p, v_t = self._parse_number(v, precision)
+
+        z = self.get_characteristic_impedance(frequency)
+        z_p, z_t = self._parse_number(z, precision)
+
         print '------------------------------------------------------------'
         print '            Results'
         print ''
-        print '    Inductance per unit length:    '+\
-               str(self.get_inductance_per_unit_length(frequency))+'\tH/m'
-        print '    Capacitance per unit length:    '+\
-               str(self.get_capacitance_per_unit_length(frequency))+'\tF/m'
-        print '    Resistance per unit length:    '+\
-               str(self.get_resistance_per_unit_length(frequency))+'\tohm/m'
-        print '    Conductance per unit length:    '+\
-               str(self.get_conductance_per_unit_length(frequency))+'\tS/m'
+        print '    Inductance per unit length:    '+Ll_p+' '+Ll_t+'H/m'
+        print '    Capacitance per unit length:   '+Cl_p+' '+Cl_t+'F/m'
+        print '    Resistance per unit length:    '+Rl_p+' '+Rl_t+'Ω/m'
+        print '    Conductance per unit length:   '+Gl_p+' '+Gl_t+'S/m'
         print ''
-        print '    Attenuation:            '+\
-               str(self.get_attenuation(frequency))+'\t/m'
-        print '    Wave vector:            '+\
-               str(self.get_wave_vector(frequency))+'\t/m'
-        print '    Velocity:            '+\
-               str(self.get_velocity(frequency))+'\tc'
-        print '    Characteristic impedance:    '+\
-               str(self.get_characteristic_impedance(frequency))+'\tohm'
+        print '    Attenuation:            '+a_p+' /'+a_t+'m'
+        print '    Wave vector:            '+w_p+' /'+w_t+'m'
+        print '    Velocity:            '+v_p+' /'+v_t+'c'
+        print '    Characteristic impedance:    '+z_p+' /'+z_t+'Ω'
+        print '------------------------------------------------------------'

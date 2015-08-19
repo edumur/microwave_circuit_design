@@ -771,8 +771,13 @@ class CPW(object):
                     - Length capacitance in Farrad per meter
         '''
 
-        return 2.*cst.epsilon_0*(self._F_up(self._t)\
+        temp = 2.*cst.epsilon_0*(self._F_up(self._t)\
                                  + self._epsilon_r*self._F_low())
+
+        if type(f) is np.ndarray:
+            return temp*np.ones_like(f)
+        else:
+            return temp
 
     def get_conductance_per_unit_length(self, f):
         '''Return the length conductance of the transmision line

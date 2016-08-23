@@ -731,30 +731,32 @@ class CPW(object):
                     - Length inductance in Henrys per meter
         '''
 
-        first_condition = np.ma.masked_less_equal(f, self._omega_L0()).mask
-        second_condition = np.ma.masked_less_equal(f, self._omega_L1()).mask
-        third_condition = np.ma.masked_less_equal(f, self._omega_L2()).mask
+        f_a = f[f<self._omega_L0()/2./np.pi]
+        f_b = f[f[f<self._omega_L1()/2./np.pi]>=self._omega_L0()/2./np.pi]
+        f_c = f[f[f<self._omega_L2()/2./np.pi]>=self._omega_L1()/2./np.pi]
+        f_d = f[f>=self._omega_L2()/2./np.pi]
 
-        if first_condition:
-            return self._L_DC(self._w, self._w_g)\
-                   *(1. + self._a_0L()*(self._omega(f)/self._omega_L0())**2.)
-        elif [~first_condition] and second_condition :
-            return self._L_inf()\
-                   + self._L_1()\
-                     *(self._omega(f)/self._omega_L1())**self._nu_1()\
-                     *(1. + self._a_1L()*(self._omega_L0()/self._omega(f))**2.\
-                          + self._a_2L()*(self._omega(f)/self._omega_L1())**2.)
-        elif [~second_condition] and third_condition :
-            return self._L_inf()\
-                   + self._L_2()\
-                     *(self._omega(f)/self._omega_L2())**self._nu_2()\
-                     *(1. + self._a_3L()*(self._omega_L1()/self._omega(f))**2.\
-                          + self._a_4L()*(self._omega(f)/self._omega_L2())**2.)
-        else :
-            return self._L_inf()\
-                   + np.sqrt(cst.mu_0/(2.*self._omega(f)*self._kappa))\
-                     *((self._F_lc() + self._F_lg())/4./self._F_up(self._t/2.)**2.)\
-                     *(1. + self._a_5L()*(self._omega_L2()/self._omega(f)))
+        a = self._L_DC(self._w, self._w_g)\
+            *(1. + self._a_0L()*(self._omega(f_a)/self._omega_L0())**2.)
+
+        b = self._L_inf()\
+            + self._L_1()\
+              *(self._omega(f_b)/self._omega_L1())**self._nu_1()\
+              *(1. + self._a_1L()*(self._omega_L0()/self._omega(f_b))**2.\
+                   + self._a_2L()*(self._omega(f_b)/self._omega_L1())**2.)
+
+        c =  self._L_inf()\
+             + self._L_2()\
+               *(self._omega(f_c)/self._omega_L2())**self._nu_2()\
+               *(1. + self._a_3L()*(self._omega_L1()/self._omega(f_c))**2.\
+                    + self._a_4L()*(self._omega(f_c)/self._omega_L2())**2.)
+
+        d = self._L_inf()\
+            + np.sqrt(cst.mu_0/(2.*self._omega(f_d)*self._kappa))\
+              *((self._F_lc() + self._F_lg())/4./self._F_up(self._t/2.)**2.)\
+              *(1. + self._a_5L()*(self._omega_L2()/self._omega(f_d)))
+
+        return np.concatenate((a, b, c, d))
 
 
     def get_resistance_per_unit_length(self, f):

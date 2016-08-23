@@ -578,10 +578,10 @@ class CPW(object):
     ##########################################################################
 
     def _R_c0(self):
-        return 1./(self._kappa*self._w*self._t)
+        return 1./self._kappa/self._w/self._t
 
     def _R_c1(self):
-        return np.sqrt((self._omega_c2()*cst.mu_0)/(2.*self._kappa))\
+        return np.sqrt(self._omega_c2()*cst.mu_0/2./self._kappa)\
                *self._F_lc()/4./self._F_up(self._t/2.)**2.
 
     ##########################################################################
@@ -596,7 +596,7 @@ class CPW(object):
         return 1./2./self._kappa/self._w_g/self._t
 
     def _R_g1(self):
-        return np.sqrt((self._omega_g2()*cst.mu_0)/2./self._kappa)\
+        return np.sqrt(self._omega_g2()*cst.mu_0/2./self._kappa)\
                *self._F_lg()/4./self._F_up(self._t/2.)**2.
 
     ##########################################################################
@@ -674,39 +674,45 @@ class CPW(object):
     ##########################################################################
 
     def _Rc(self, f):
-        first_condition = np.ma.masked_less_equal(f, self._omega_c1()).mask
-        second_condition = np.ma.masked_less_equal(f, self._omega_c2()).mask
 
-        if first_condition:
-            return self._R_c0()\
-                   *(1. + self._a_1c()*(self._omega(f)/self._omega_c1())**2.)
-        elif [~first_condition] and second_condition:
-            return self._R_c1()\
-                   *(self._omega(f)/self._omega_c2())**self._nu_c()\
-                   *(1. + self._a_2c()*(self._omega_c1()/self._omega(f))**2.\
-                        + self._a_3c()*(self._omega(f)/self._omega_c2())**2.)
-        elif [~second_condition]:
-            return np.sqrt((self._omega(f)*cst.mu_0)/(2.*self._kappa))\
-                   *self._F_lc()/4./self._F_up(self._t/2.)**2\
-                   *(1. + self._a_4c()*(self._omega_c2()/self._omega(f))**2)
+        f_a = f[f<self._omega_c1()/2./np.pi]
+        f_b = f[f[f<self._omega_c2()/2./np.pi]>=self._omega_c1()/2./np.pi]
+        f_c = f[f>=self._omega_c2()/2./np.pi]
+
+        a = self._R_c0()\
+               *(1. + self._a_1c()*(self._omega(f_a)/self._omega_c1())**2.)
+
+        b = self._R_c1()\
+               *(self._omega(f_b)/self._omega_c2())**self._nu_c()\
+               *(1. + self._a_2c()*(self._omega_c1()/self._omega(f_b))**2.\
+                    + self._a_3c()*(self._omega(f_b)/self._omega_c2())**2.)
+
+        c = np.sqrt((self._omega(f_c)*cst.mu_0)/(2.*self._kappa))\
+               *self._F_lc()/4./self._F_up(self._t/2.)**2\
+               *(1. + self._a_4c()*(self._omega_c2()/self._omega(f_c))**2)
+
+        return np.concatenate((a, b, c))
 
 
     def _Rg(self, f):
-        first_condition = np.ma.masked_less_equal(f, self._omega_g1()).mask
-        second_condition = np.ma.masked_less_equal(f, self._omega_g2()).mask
 
-        if first_condition:
-            return self._R_g0()\
-                   *(1. + self._a_1g()*(self._omega(f)/self._omega_g1())**2.)
-        elif [~first_condition] and second_condition:
-            return self._R_g1()\
-                   *(self._omega(f)/self._omega_g2())**self._nu_g()\
-                   *(1. + self._a_2g()*(self._omega_g1()/self._omega(f))**2\
-                        + self._a_3g()*(self._omega(f)/self._omega_g2())**2)
-        elif  [~second_condition]:
-            return np.sqrt((self._omega(f)*cst.mu_0)/(2.*self._kappa))\
-                   *self._F_lg()/4./self._F_up(self._t/2.)**2\
-                   *(1. + self._a_4g()*(self._omega_g2()/self._omega(f))**2)
+        f_a = f[f<self._omega_g1()/2./np.pi]
+        f_b = f[f[f<self._omega_g2()/2./np.pi]>=self._omega_g1()/2./np.pi]
+        f_c = f[f>=self._omega_g2()/2./np.pi]
+
+        a = self._R_g0()\
+               *(1. + self._a_1g()*(self._omega(f_a)/self._omega_g1())**2.)
+
+        b = self._R_g1()\
+               *(self._omega(f_b)/self._omega_g2())**self._nu_g()\
+               *(1. + self._a_2g()*(self._omega_g1()/self._omega(f_b))**2\
+                    + self._a_3g()*(self._omega(f_b)/self._omega_g2())**2)
+
+        c = np.sqrt((self._omega(f_c)*cst.mu_0)/(2.*self._kappa))\
+               *self._F_lg()/4./self._F_up(self._t/2.)**2\
+               *(1. + self._a_4g()*(self._omega_g2()/self._omega(f_c))**2)
+
+        return np.concatenate((a, b, c))
 
     ##########################################################################
     #

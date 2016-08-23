@@ -758,7 +758,6 @@ class CPW(object):
 
         return np.concatenate((a, b, c, d))
 
-
     def get_resistance_per_unit_length(self, f):
         '''Return the length resistance of the transmision line
                 - Input :
@@ -799,9 +798,8 @@ class CPW(object):
         return 2.*self._omega(f)*cst.epsilon_0\
                *self._epsilon_r*self._tan_delta*self._F_low()
 
-    def get_characteristic_impedance(self, f):
-        '''Return the absolute value of the characteristic impedance of the
-           transmision line
+    def get_characteristic_impedance(self, f, norm=True):
+        '''Return the characteristic impedance of the transmision line
                 - Input :
                     - Frequency (float | list | numpy.ndarray) in Hertz
 
@@ -813,7 +811,10 @@ class CPW(object):
         b = self.get_conductance_per_unit_length(f)\
             + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)
 
-        return abs(np.sqrt(a/b))
+        if norm:
+            return abs(np.sqrt(a/b))
+        else:
+            return np.sqrt(a/b)
 
     def get_complex_wave_vector(self, f):
         '''Return the real and imaginary part of the complex wave vector

@@ -731,6 +731,9 @@ class CPW(object):
                     - Length inductance in Henrys per meter
         '''
 
+        if not isinstance(f, np.ndarray):
+            f = np.array([f])
+
         f_a = f[f<self._omega_L0()/2./np.pi]
         f_b = f[f[f<self._omega_L1()/2./np.pi]>=self._omega_L0()/2./np.pi]
         f_c = f[f[f<self._omega_L2()/2./np.pi]>=self._omega_L1()/2./np.pi]
@@ -766,6 +769,9 @@ class CPW(object):
                 - Output :
                     - Length resistance in Ohms per meter
         '''
+
+        if not isinstance(f, np.ndarray):
+            f = np.array([f])
 
         return self._Rc(f) + self._Rg(f)
 

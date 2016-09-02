@@ -27,7 +27,7 @@ class Super_CPW(CPW):
 
     def __init__(self, epsilon_r = 11.68, tan_delta = 7e-4, kappa = 3.53e50,
                        w = 19e-6, s = 11.5e-6, t = 100e-9, w_g = 200e-6,
-                       rho_n = 5e-8, delta=210e-6):
+                       rho_n = 0.025e-8, delta=210e-6):
         '''
 
         Attributes

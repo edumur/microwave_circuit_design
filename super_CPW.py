@@ -60,7 +60,7 @@ class Super_CPW(CPW):
 
 
 
-    def get_inductance_per_unit_length(self, f):
+    def get_inductance_per_unit_length(self, f, separate=False):
         '''
         Return the length inductance of the transmision line by taking into
         account the superconductivity of the metal layer.
@@ -69,6 +69,8 @@ class Super_CPW(CPW):
         ----------
         f : float, numpy.ndarray
             Frequency in Hz
+        separate : Booleen
+            If True return a tupple of inductance as (geometric, kinetic).
 
         Return
         ----------
@@ -89,4 +91,7 @@ class Super_CPW(CPW):
         lambda_eff = np.sqrt(cst.hbar*self.rho_n/cst.mu_0/np.pi/self.delta/cst.eV)
         Lk = cst.mu_0*lambda_eff*g/np.tanh(self._t/lambda_eff)
 
-        return Ll + Lk
+        if separate:
+            return Ll, Lk
+        else:
+            return Ll + Lk

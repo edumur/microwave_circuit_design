@@ -27,7 +27,7 @@ class Super_CPW(CPW):
 
     def __init__(self, epsilon_r = 11.68, tan_delta = 7e-4, kappa = 3.53e50,
                        w = 19e-6, s = 11.5e-6, t = 100e-9, w_g = 200e-6,
-                       rho_n = 0.025e-8, delta=210e-6):
+                       rho_n=3e-6, delta=180e-6):
         '''
 
         Attributes
@@ -82,7 +82,7 @@ class Super_CPW(CPW):
 
         k = self._ellipk(self._k1())**2.
         d = self._t/4./np.pi/np.exp(np.pi)
-        g = (self._w + 2.*self._s)**2./32/k/self._s/(self._w+self._s)\
+        g = (self._w + 2.*self._s)**2./32./k/self._s/(self._w+self._s)\
             *(  2.*np.log(self._w*self._s/d/(self._w+self._s))\
                   /self._w\
               + 2.*np.log((self._w+2*self._s)*self._s/d/(self._w+self._s))\

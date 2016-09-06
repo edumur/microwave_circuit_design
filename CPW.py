@@ -838,7 +838,7 @@ class CPW(object):
         b = self.get_conductance_per_unit_length(f)\
             + 1j*self._omega(f)*self.get_capacitance_per_unit_length(f)
 
-        c = np.sqrt(a + b)
+        c = np.sqrt(a*b)
 
         return c.real, c.imag
 

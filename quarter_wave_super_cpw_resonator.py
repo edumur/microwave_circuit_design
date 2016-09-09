@@ -62,6 +62,43 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
 
 
 
+    def __repr__(self):
+
+        w_p, w_t = self._parse_number(self._w, 3)
+        s_p, s_t = self._parse_number(self._s, 3)
+        t_p, t_t = self._parse_number(self._t, 3)
+        w_g_p, w_g_t = self._parse_number(self._w_g, 3)
+        e_r_p, e_r_t = self._parse_number(self._epsilon_r, 3)
+        kappa_p, kappa_t = self._parse_number(self._kappa, 3)
+        rho_p, rho_t = self._parse_number(self.rho_n, 3)
+        delta_p, delta_t = self._parse_number(self.delta, 3)
+        l_p, l_t = self._parse_number(self.l, 6)
+
+        b = int(np.log10(self._tan_delta))
+        c = self._tan_delta*10**-b
+
+        return 'CoPlanar Waveguide instanced with following parameters:\n'\
+               '\n'\
+               '    Geometrical parameters:\n'\
+               '        Central line width:      '+w_p+' '+w_t+'m\n'\
+               '        Gap separation width:    '+s_p+' '+s_t+'m\n'\
+               '        Thickness:               '+t_p+' '+t_t+'m\n'\
+               '        Ground plane width:      '+w_g_p+' '+w_g_t+'m\n'\
+               '\n'\
+               '    Electrical parameters:\n'\
+               '        Relative permitivity:    '+e_r_p+' '+e_r_t+'F/m\n'\
+               '        Loss tangente:           '+str(c)+'e'+str(b)+'\n'\
+               '        Electrical conductivity: '+kappa_p+' '+kappa_t+'S/m\n'\
+               '\n'\
+               '    Superconductor parameters:\n'\
+               '        Superconductor gap:     '+rho_p+' '+rho_t+'ohm/m\n'\
+               '        Normal resistivity:     '+str(delta_p)+' '+str(delta_t)+'eV\n'\
+               '\n'\
+               '    Resonator:\n'\
+               '        Length:     '+l_p+' '+l_t+'m'
+
+
+
     def get_resonator_capacitance(self):
 
         f0 = self.get_resonance_frequency()

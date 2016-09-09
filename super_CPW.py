@@ -3,6 +3,19 @@
 
 # Copyright (C) 2016 Dumur Étienne
 
+# The kinetic inductance calculation comes from the following paper:
+# W. Rauch, E. Gornik, G. Sölkner, A. A. Valenzuela, F. Fox and H. Behner
+# Microwave properties of YBa2Cu3O7−x thin films studied with coplanar
+# transmission line resonators
+# Journal of Applied Physics, (1993), 73, 1866-1872
+# doi: 10.1063/1.353173
+
+# The penetration length calculation follows:
+# R. L. Kautz
+# Picosecond pulses on superconducting striplines
+# Journal of Applied Physics 49, 308 (1978)
+# doi: 10.1063/1.324387
+
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -16,18 +29,19 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 import numpy as np
 import scipy.constants as cst
 
 from CPW import CPW
 
-class Super_CPW(CPW):
+class SuperCPW(CPW):
 
 
 
     def __init__(self, epsilon_r = 11.68, tan_delta = 7e-4, kappa = 3.53e50,
                        w = 19e-6, s = 11.5e-6, t = 100e-9, w_g = 200e-6,
-                       rho_n=3e-6, delta=180e-6):
+                       rho_n=3e-8, delta=180e-6):
         '''
 
         Attributes
@@ -47,7 +61,7 @@ class Super_CPW(CPW):
         w_g       : float
             Width of the ground plane in meter.
         rho_n     : float
-            Resistivity of the metal layer just above the transition in ohm.cm.
+            Resistivity of the metal layer just above the transition in ohm.m.
         delta     : float
             Superconductor gap in eV.
         '''
@@ -57,6 +71,16 @@ class Super_CPW(CPW):
 
         CPW.__init__(self, epsilon_r=epsilon_r, tan_delta=tan_delta,kappa=kappa,
                            w=w, s=s, t=t, w_g=w_g)
+
+
+
+    def get_penetration_length(self):
+        '''
+        Return the london penetration length in m.
+        '''
+
+        return np.sqrt(cst.hbar*self.rho_n/cst.mu_0/np.pi/self.delta/cst.eV)
+
 
 
 
@@ -80,16 +104,13 @@ class Super_CPW(CPW):
 
         Ll = CPW.get_inductance_per_unit_length(self, f)
 
-        k = self._ellipk(self._k1())**2.
-        d = self._t/4./np.pi/np.exp(np.pi)
-        g = (self._w + 2.*self._s)**2./32./k/self._s/(self._w+self._s)\
-            *(  2.*np.log(self._w*self._s/d/(self._w+self._s))\
-                  /self._w\
-              + 2.*np.log((self._w+2*self._s)*self._s/d/(self._w+self._s))\
-                  /(self._w+2*self._s))
-
-        lambda_eff = np.sqrt(cst.hbar*self.rho_n/cst.mu_0/np.pi/self.delta/cst.eV)
-        Lk = cst.mu_0*lambda_eff*g/np.tanh(self._t/lambda_eff)
+        a = -self._t/np.pi +np.sqrt((2.*self._t/np.pi)**2. + self._w**2.)/2.
+        b = self._w**2./4./a
+        c = b - self._t/np.pi + np.sqrt((self._t/np.pi)**2. + self._s**2./2.)
+        d = 2.*self._t/np.pi + c
+        Lk = cst.mu_0*self.get_penetration_length()*c/4./a/d/self._ellipk(self._k0())*(\
+              1.7/np.sinh(self._t/2./self.get_penetration_length())\
+              + 0.4/np.sqrt(((b/a)**2. - 1.)*(1. - (b/d)**2.)))
 
         if separate:
             return Ll, Lk

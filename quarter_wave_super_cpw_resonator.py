@@ -27,7 +27,7 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
 
     def __init__(self, epsilon_r=11.68, tan_delta=7e-4, kappa=3.53e50,
                        w=19e-6, s=11.5e-6, t=100e-9, w_g=200e-6,
-                       rho_n=3e-8, delta=180e-6, l=5e-3):
+                       rho_n=3e-8, rrr=2.4, delta=180e-6, l=5e-3):
         '''
 
         Attributes
@@ -47,7 +47,9 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
         w_g       : float
             Width of the ground plane in meter.
         rho_n     : float
-            Resistivity of the metal layer just above the transition in ohm.m.
+            Resistivity of the metal layer in ohm.m.
+        rrr     : float
+            Residual-resistance ratio of the metallic layer.
         delta     : float
             Superconductor gap in eV.
         l         : float
@@ -58,7 +60,7 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
 
         SuperCPW.__init__(self, epsilon_r=epsilon_r, tan_delta=tan_delta,
                                     kappa=kappa, w=w, s=s, t=t,
-                                    w_g=w_g,rho_n=rho_n, delta=delta)
+                                    w_g=w_g,rho_n=rho_n, rrr=rrr, delta=delta)
 
 
 
@@ -72,6 +74,8 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
         kappa_p, kappa_t = self._parse_number(self._kappa, 3)
         rho_p, rho_t = self._parse_number(self.rho_n, 3)
         delta_p, delta_t = self._parse_number(self.delta, 3)
+        rrr_p, rrr_t = self._parse_number(self.rrr, 3)
+        l_p, l_t = self._parse_number(self.l, 6)
         l_p, l_t = self._parse_number(self.l, 6)
 
         b = int(np.log10(self._tan_delta))
@@ -91,8 +95,9 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
                '        Electrical conductivity: '+kappa_p+' '+kappa_t+'S/m\n'\
                '\n'\
                '    Superconductor parameters:\n'\
-               '        Superconductor gap:     '+rho_p+' '+rho_t+'ohm/m\n'\
-               '        Normal resistivity:     '+str(delta_p)+' '+str(delta_t)+'eV\n'\
+               '        Superconductor gap:     '+str(delta_p)+' '+str(delta_t)+'eV\n'\
+               '        Normal resistivity:     '+rho_p+' '+rho_t+'ohm/m\n'\
+               '        RRR:     '+str(rrr_p)+' '+str(rrr_t)+'\n'\
                '\n'\
                '    Resonator:\n'\
                '        Length:     '+l_p+' '+l_t+'m'

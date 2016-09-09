@@ -87,7 +87,24 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
 
 
 
-    def get_resonance_frequency(self, precision=4):
+    def get_resonance_frequency(self, precision=4., Cc=None):
+        '''
+        Return the resonance frequency of a quarter wave resonator in Hz.
+
+        Parameters
+        ----------
+        precision : {4} float
+            Precision of the calculation, pretty useless since the convergence
+            of the calculation is super fast.
+        Cc : {None} float
+            The coupling capacitance of the resonator.
+            If None return the resonance frequency of an uncoupled resonator.
+
+        Return
+        ----------
+        f0 : float
+            Resonance frequency of a quarterwave resonator.
+        '''
 
         condition = 1.
         f0 = 8e9
@@ -95,7 +112,16 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
 
             l = self.get_inductance_per_unit_length(f0)
             c = self.get_capacitance_per_unit_length(f0)
-            f1 = np.pi/2./self.l/np.sqrt(l*c)/2./np.pi
+
+            # If the coupling capacitance is not given, we return the resonance
+            # frequency of an uncoupled resonator
+            if Cc is None:
+                f1 = np.pi/2./self.l/np.sqrt(l*c)/2./np.pi
+            # If the coupling capacitance is given, we return the resonance
+            # frequency of a coupled resonator
+            else:
+                f1 = np.pi/2./self.l/np.sqrt(l*c)/2./np.pi\
+                     /(1. + Cc/self.l/c)
 
             condition = abs(f0 - f1)/1e9
 

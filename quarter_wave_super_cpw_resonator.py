@@ -97,7 +97,7 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
             Precision of the calculation, pretty useless since the convergence
             of the calculation is super fast.
         Cc : {None} float
-            The coupling capacitance of the resonator.
+            The coupling capacitance of the resonator in farad.
             If None return the resonance frequency of an uncoupled resonator.
 
         Return
@@ -128,3 +128,27 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
             f0 = f1
 
         return f0
+
+
+
+    def qc2cc(self, qc):
+        '''
+        Return the coupling capacitance from the coupling/external quality
+        factor
+
+        Parameters
+        ----------
+        qc : float
+            Coupling quality factor
+
+        Return
+        ----------
+        Cc : float
+            The coupling capacitance of the resonator in farad.
+        '''
+
+        f0 = self.get_resonance_frequency()
+        zr = self.get_characteristic_impedance(f0)
+        o0 = f0*2.*np.pi
+
+        return np.sqrt(np.pi/2./o0**2./qc/zr/50.)

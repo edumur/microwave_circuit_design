@@ -162,8 +162,7 @@ class QuarterWaveSuperCPWResonator(SuperCPW):
             # If the coupling capacitance is given, we return the resonance
             # frequency of a coupled resonator
             else:
-                f1 = np.pi/2./self.l/np.sqrt(l*c)/2./np.pi\
-                     /(1. + Cc/self.l/c)
+                f1 = np.sqrt(np.pi**2./8./self.l/l/(c*self.l/2. + Cc))/2./np.pi
 
             condition = abs(f0 - f1)/1e9
 
